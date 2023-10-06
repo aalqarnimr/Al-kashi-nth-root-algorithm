@@ -114,8 +114,7 @@
         </thead>
         <tbody></tbody>
         <tfoot>
-          <tr>
-          </tr>
+          <tr></tr>
         </tfoot>
       </table>
     </div>
@@ -150,9 +149,8 @@
         );
         maxWidth = headRow.children.length;
         firstNumber = headRow.lastChild;
-        resultNumbersElement = document.querySelector(".root-result");
         tableElement = document.querySelector("table");
-        setWidth(resultNumbersElement, tableElement);
+        //-------------------steps rows-------------------------------------------
         removeBorder(headRow.children, power);
         let [leasthNth, leastNthpowered] = leastNthRoot(
           mergedNumbers[numOfmerged - 1],
@@ -173,9 +171,41 @@
           1,
           maxWidth
         );
-        tableFooterElement = document.querySelector("tfoot"); 
+        removeBorder(bodyTable.children[0].children, power);
+        borderAroundNumber(bodyTable.children[0].children);
+
+        subtractResult =mergedNumbers[numOfmerged-1]-leastNthpowered;
+        subResultList = getDividedNumbers(subtractResult);
+        bodyRow = document.createElement("tr");
+        bodyTable.appendChild(bodyRow);
+        createRowCells(
+          subResultList,
+          bodyTable.children[1],
+          false,
+          headRow.children.length - power,
+          "",
+          "before-maxed",
+          1,
+          maxWidth
+        );
+        removeBorder(bodyTable.children[1].children, power);
+
+        //---------------------empty rows---------------------------------------
+        for (i of range(1, 3)) {
+          emptyBodyRow = document.createElement("tr");
+          bodyTable.appendChild(emptyBodyRow);
+          createRowCells([], emptyBodyRow, false, maxWidth, "  ");
+
+          removeBorder(emptyBodyRow.children, power);
+        }
+        lastDigit = resultRow.children[
+          resultRow.children.length - 1
+        ].innerText = leasthNth;
+        
+        // ---------------------footer------------------------------------------
+        tableFooterElement = document.querySelector("tfoot");
         binomialCoefficients = binomialCoefficients(power);
-        footerNum = leasthNth*binomialCoefficients[1];
+        footerNum = leasthNth * binomialCoefficients[1];
         listFooterNum = getDividedNumbers(footerNum);
         console.log(footerNum);
         createRowCells(
@@ -188,17 +218,8 @@
           1,
           maxWidth
         );
-        
-        removeBorder(tableFooterElement.children[0].children,power);
-        emptyBodyRow = document.createElement("tr");
-        bodyTable.appendChild(emptyBodyRow);
-        createRowCells([], emptyBodyRow, false, maxWidth, "  ");
-
-        removeBorder(emptyBodyRow.children, power);
-        removeBorder(bodyTable.children[0].children, power);
-        lastDigit = resultRow.children[
-          resultRow.children.length - 1
-        ].innerText = leasthNth;
+        removeBorder(tableFooterElement.children[0].children, power);
+        borderAroundNumber(tableFooterElement.children[0].children, true);
       }
       // .....................................................................
       // .....................................................................
@@ -346,6 +367,17 @@
           return 1;
         } else {
           return n * factorial(n - 1);
+        }
+      }
+      function borderAroundNumber(cells, above = false) {
+        for (cell of cells) {
+          if (cell.innerText.length != 0) {
+            if (above) {
+              cell.style.borderTop = "2px solid grey";
+            } else {
+              cell.style.borderBottom = "2px solid grey";
+            }
+          }
         }
       }
     </script>
