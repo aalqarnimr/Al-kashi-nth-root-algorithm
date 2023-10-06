@@ -115,7 +115,6 @@
         <tbody></tbody>
         <tfoot>
           <tr>
-            <td>sadasda</td>
           </tr>
         </tfoot>
       </table>
@@ -174,12 +173,14 @@
           1,
           maxWidth
         );
+        tableFooterElement = document.querySelector("tfoot"); 
         binomialCoefficients = binomialCoefficients(power);
         footerNum = leasthNth*binomialCoefficients[1];
         listFooterNum = getDividedNumbers(footerNum);
+        console.log(footerNum);
         createRowCells(
           listFooterNum,
-          bodyTable.children[0],
+          tableFooterElement.children[0],
           false,
           headRow.children.length - power,
           "",
@@ -187,6 +188,8 @@
           1,
           maxWidth
         );
+        
+        removeBorder(tableFooterElement.children[0].children,power);
         emptyBodyRow = document.createElement("tr");
         bodyTable.appendChild(emptyBodyRow);
         createRowCells([], emptyBodyRow, false, maxWidth, "  ");
