@@ -113,9 +113,7 @@
           <tr class="headRow"></tr>
         </thead>
         <tbody></tbody>
-        <tfoot>
-          <tr></tr>
-        </tfoot>
+        <tfoot></tfoot>
       </table>
     </div>
     <script>
@@ -204,8 +202,10 @@
         
         // ---------------------footer------------------------------------------
         tableFooterElement = document.querySelector("tfoot");
-        binomialCoefficients = binomialCoefficients(power);
-        footerNum = leasthNth * binomialCoefficients[1];
+        footerRow = document.createElement("tr");
+        tableFooterElement.appendChild(footerRow);
+        binomialCoefficientsList = binomialCoefficients(power);
+        footerNum = leasthNth * binomialCoefficientsList[1];
         listFooterNum = getDividedNumbers(footerNum);
         console.log(footerNum);
         createRowCells(
