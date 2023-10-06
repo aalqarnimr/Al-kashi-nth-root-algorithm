@@ -70,14 +70,20 @@
       .resultRow th:last-of-type {
         border-left: none;
       }
-      tbody tr td{
+      tbody tr td,
+      tfoot tr td {
         border-left: 1px solid black;
         border-right: 1px solid black;
         text-align: center;
       }
-      tbody tr td:last-of-type{
+      tbody tr td:last-of-type,
+      tfoot tr td:last-of-type {
         border-left: 1px solid black;
-        text-align: center;
+      }
+      tbody tr td {
+        padding: 15px;
+      }
+      tfoot tr td {
       }
     </style>
   </head>
@@ -106,8 +112,12 @@
           <tr class="resultRow"></tr>
           <tr class="headRow"></tr>
         </thead>
-        <tbody>
-        </tbody>
+        <tbody></tbody>
+        <tfoot>
+          <tr>
+            <td>sadasda</td>
+          </tr>
+        </tfoot>
       </table>
     </div>
     <script>
@@ -135,10 +145,11 @@
           resultRow,
           true,
           Math.ceil(headRow.children.length / power),
-          "","after",
+          "",
+          "after",
           power
         );
-
+        maxWidth = headRow.children.length;
         firstNumber = headRow.lastChild;
         resultNumbersElement = document.querySelector(".root-result");
         tableElement = document.querySelector("table");
@@ -152,17 +163,44 @@
         bodyTable = document.querySelector("tbody");
         bodyRow = document.createElement("tr");
         bodyTable.appendChild(bodyRow);
+
         createRowCells(
           squaredList,
           bodyTable.children[0],
           false,
           headRow.children.length - power,
           "",
-          "before"
+          "before-maxed",
+          1,
+          maxWidth
         );
-        removeBorder(bodyTable.children[0].children,power);
-        lastDigit= resultRow.children[resultRow.children.length-1].innerText=leasthNth;
+        binomialCoefficients = binomialCoefficients(power);
+        footerNum = leasthNth*binomialCoefficients[1];
+        listFooterNum = getDividedNumbers(footerNum);
+        createRowCells(
+          listFooterNum,
+          bodyTable.children[0],
+          false,
+          headRow.children.length - power,
+          "",
+          "before-maxed",
+          1,
+          maxWidth
+        );
+        emptyBodyRow = document.createElement("tr");
+        bodyTable.appendChild(emptyBodyRow);
+        createRowCells([], emptyBodyRow, false, maxWidth, "  ");
+
+        removeBorder(emptyBodyRow.children, power);
+        removeBorder(bodyTable.children[0].children, power);
+        lastDigit = resultRow.children[
+          resultRow.children.length - 1
+        ].innerText = leasthNth;
       }
+      // .....................................................................
+      // .....................................................................
+      // .....................................................................
+      // .....................................................................
       function getDividedNumbers(number) {
         var numbers = [];
         var i = 0;
@@ -198,7 +236,7 @@
       }
       function leastNthRoot(number, power) {
         leastRoot = Math.floor(Math.pow(number, 1 / power));
-        return [leastRoot, Math.pow(leastRoot,power)];
+        return [leastRoot, Math.pow(leastRoot, power)];
       }
       function* range(start, end) {
         for (let i = start; i < end; i++) {
@@ -212,14 +250,14 @@
         extraCells = 0,
         extraCellsContent = 0,
         extraCellsPosition = "after",
-        colspan = 1
+        colspan = 1,
+        maxLength = 1
       ) {
         if (isHead) {
           element = "th";
         } else {
           element = "td";
         }
-        console.log(row);
         for (number of numbersArr) {
           tableCell = document.createElement(element);
           tableCell.appendChild(document.createTextNode(number));
@@ -235,7 +273,18 @@
           if (extraCellsPosition == "before") {
             $(row).prepend(tableCell);
           }
+          if (extraCellsPosition == "before-maxed") {
+            $(row).prepend(tableCell);
+          }
           tableCell.setAttribute("colspan", colspan);
+        }
+        if (extraCellsPosition == "before-maxed") {
+          remainingCells = maxLength - row.children.length;
+          for (i of range(0, remainingCells)) {
+            tableCell = document.createElement(element);
+            tableCell.appendChild(document.createTextNode(extraCellsContent));
+            row.appendChild(tableCell);
+          }
         }
       }
       function resetTable() {
@@ -243,6 +292,7 @@
         for (row of tableHeadRows) {
           row.innerHTML = null;
         }
+        document.querySelector("tbody").innerHTML = null;
       }
       function setWidth(element, widthElement) {
         widthOfELement = widthElement.offsetWidth;
@@ -252,7 +302,6 @@
       function removeBorder(cells, multipier) {
         activeCellIndex = 1;
         cellsLength = cells.length;
-        console.log(cells);
         while (activeCellIndex < cellsLength) {
           for (i of range(1, multipier)) {
             cells[activeCellIndex - 1].style.borderLeft = "none";
@@ -274,6 +323,28 @@
       //     activeCellIndex++;
       //   }
       // }
+      function binomialCoefficients(power) {
+        if (power < 0) {
+          return [];
+        }
+
+        const coefficients = [];
+        for (let i = 0; i <= power; i++) {
+          coefficients.push(
+            factorial(power) / (factorial(i) * factorial(power - i))
+          );
+        }
+
+        return coefficients;
+      }
+
+      function factorial(n) {
+        if (n === 0 || n === 1) {
+          return 1;
+        } else {
+          return n * factorial(n - 1);
+        }
+      }
     </script>
   </body>
 </html>
