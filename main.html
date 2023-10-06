@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body {
+        margin: 0;
+      }
+      h1 {
+        margin: 0px;
+      }
+      input#root-power {
+        margin-right: 10px;
+      }
+      form {
+        margin: 20px;
+      }
+      table {
+        border: 1px solid black;
+      }
+      th {
+        padding: 15px;
+      }
+
+      .end {
+        grid-area: footer;
+      }
+      form button[type="button"] {
+        margin-right: 15px;
+        font-size: 20px;
+        padding: 0 15px;
+      }
+      header {
+        background-color: rosybrown;
+        padding-right: 15px;
+        padding: 25px;
+        margin: 0;
+      }
+      .table_container {
+        display: flex;
+        justify-content: center;
+      }
+      tr,
+      thead,
+      th {
+        border: 1px solid black;
+      }
+
+    </style>
+  </head>
+  <body>
+    <header><h1>خوارزمية ايجاد الجذر النوني للكاشي</h1></header>
+    <form>
+      <p>
+        <label for="whole">الرقم المجذور: </label>
+        <input type="number" id="whole" />
+      </p>
+      <p>
+        <label for="root-power">درجة الجذر: </label>
+        <input type="number" id="root-power" />
+      </p>
+      <p>
+        <button type="button" onclick="startAlgorithm()">أبدا</button>
+      </p>
+    </form>
+    <hr />
+    <div class="table_container">
+      <div class="root-result">
+
+      </div>
+      <table>
+        <thead>
+          <tr></tr>
+        </thead>
+      </table>
+    </div>
+    <script>
+      function startAlgorithm() {
+        resetTable()
+        var whole = document.getElementById("whole").value;
+        var power = document.getElementById("root-power").valueAsNumber;
+        tHeads = document.querySelectorAll("th");
+        numbers = getDividedNumbers(whole);
+        mergedNumbers = mergeNumbers(numbers, power);
+        console.log(mergedNumbers);
+        headRow = document.querySelector("thead > tr");
+        createRowCells(mergedNumbers, headRow, true);
+      }
+      function getDividedNumbers(number) {
+        var numbers = [];
+        var i = 0;
+        while (number != 0) {
+          numbers[i] = number % 10;
+          number = Math.floor(number / 10);
+          i++;
+        }
+        return numbers;
+      }
+      function mergeNumbers(numbers, power) {
+        var mergedNumbers = [];
+        var index = 0;
+        let lengthNumbers = numbers.length;
+        while (index < lengthNumbers) {
+          let number = 0;
+          for (i = 0; i < power; i++) {
+            if (index < lengthNumbers) {
+              number += numbers[index] * Math.pow(10, i);
+              index++;
+            } else {
+              number = number.toString();
+            }
+          }
+          mergedNumbers.push(number);
+        }
+        return mergedNumbers;
+      }
+      function distributeNumbers(numbers, elements) {
+        for ([index, element] of elements.entries()) {
+          element.innerText = numbers[index];
+        }
+      }
+      function leastNthRoot(number, power) {
+        leastRoot = Math.floor(Math.pow(number, 1 / power));
+        return leastRoot;
+      }
+      function createRowCells(numbersArr, row, isHead) {
+        if (isHead) {
+          element = "th";
+        } else {
+          element = "td";
+        }
+        for (number of numbersArr) {
+          tableCell = document.createElement(element);
+          tableCell.appendChild(document.createTextNode(number));
+          row.appendChild(tableCell);
+        }
+      }
+      function resetTable(){
+        tableHeadRow = document.querySelector("thead > tr");
+        tableHeadRow.innerHTML = null;
+      }
+      
+    </script>
+  </body>
+</html>
