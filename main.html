@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <style>
       body {
         margin: 0;
@@ -69,6 +70,15 @@
       .resultRow th:last-of-type {
         border-left: none;
       }
+      tbody tr td{
+        border-left: 1px solid black;
+        border-right: 1px solid black;
+        text-align: center;
+      }
+      tbody tr td:last-of-type{
+        border-left: 1px solid black;
+        text-align: center;
+      }
     </style>
   </head>
   <body>
@@ -89,13 +99,15 @@
     <hr />
     <div class="table_container">
       <div class="root-result">
-        <span>first</span>
+        <span></span>
       </div>
       <table>
         <thead>
           <tr class="resultRow"></tr>
           <tr class="headRow"></tr>
         </thead>
+        <tbody>
+        </tbody>
       </table>
     </div>
     <script>
@@ -109,7 +121,7 @@
         tHeads = document.querySelectorAll("th");
         numbers = getDividedNumbers(whole);
         mergedNumbers = mergeNumbers(numbers, power);
-        console.log(mergedNumbers);
+        numOfmerged = mergedNumbers.length;
         headRow = document.querySelector(".headRow");
         resultRow = document.querySelector(".resultRow");
         createRowCells(
@@ -118,19 +130,43 @@
           true,
           power - mergedNumbers[mergedNumbers.length - 1].toString().length
         );
-        createRowCells([], resultRow, true, headRow.children.length, "");
+        createRowCells(
+          [],
+          resultRow,
+          true,
+          Math.ceil(headRow.children.length / power),
+          "","after",
+          power
+        );
+
         firstNumber = headRow.lastChild;
         resultNumbersElement = document.querySelector(".root-result");
         tableElement = document.querySelector("table");
         setWidth(resultNumbersElement, tableElement);
         removeBorder(headRow.children, power);
-
-        console.log(firstNumber.innerHTML);
+        let [leasthNth, leastNthpowered] = leastNthRoot(
+          mergedNumbers[numOfmerged - 1],
+          power
+        );
+        squaredList = getDividedNumbers(leastNthpowered);
+        bodyTable = document.querySelector("tbody");
+        bodyRow = document.createElement("tr");
+        bodyTable.appendChild(bodyRow);
+        createRowCells(
+          squaredList,
+          bodyTable.children[0],
+          false,
+          headRow.children.length - power,
+          "",
+          "before"
+        );
+        removeBorder(bodyTable.children[0].children,power);
+        lastDigit= resultRow.children[resultRow.children.length-1].innerText=leasthNth;
       }
       function getDividedNumbers(number) {
         var numbers = [];
         var i = 0;
-        while (number != 0) {
+        while (number > 0) {
           numbers[i] = number % 10;
           number = Math.floor(number / 10);
           i++;
@@ -162,7 +198,7 @@
       }
       function leastNthRoot(number, power) {
         leastRoot = Math.floor(Math.pow(number, 1 / power));
-        return leastRoot;
+        return [leastRoot, Math.pow(leastRoot,power)];
       }
       function* range(start, end) {
         for (let i = start; i < end; i++) {
@@ -174,23 +210,32 @@
         row,
         isHead,
         extraCells = 0,
-        extraCellsContent = 0
+        extraCellsContent = 0,
+        extraCellsPosition = "after",
+        colspan = 1
       ) {
         if (isHead) {
           element = "th";
         } else {
           element = "td";
         }
-        console.log(extraCells);
+        console.log(row);
         for (number of numbersArr) {
           tableCell = document.createElement(element);
           tableCell.appendChild(document.createTextNode(number));
           row.appendChild(tableCell);
+          tableCell.setAttribute("colspan", colspan);
         }
         for (i of range(0, extraCells)) {
           tableCell = document.createElement(element);
           tableCell.appendChild(document.createTextNode(extraCellsContent));
-          row.appendChild(tableCell);
+          if (extraCellsPosition == "after") {
+            row.appendChild(tableCell);
+          }
+          if (extraCellsPosition == "before") {
+            $(row).prepend(tableCell);
+          }
+          tableCell.setAttribute("colspan", colspan);
         }
       }
       function resetTable() {
@@ -207,7 +252,7 @@
       function removeBorder(cells, multipier) {
         activeCellIndex = 1;
         cellsLength = cells.length;
-        console.log(cells[0]);
+        console.log(cells);
         while (activeCellIndex < cellsLength) {
           for (i of range(1, multipier)) {
             cells[activeCellIndex - 1].style.borderLeft = "none";
@@ -217,14 +262,18 @@
           activeCellIndex++;
         }
       }
-      function mergeCells(cells, multipier) {
-        activeCellIndex = 0;
-        for (i of range(1, multipier)) {
-          console.log(cells[activeCellIndex]);
-          cells[activeCellIndex].css("border-left", "none");
-          cells[activeCellIndex + 1].css("border-right", "none");
-        }
-      }
+      // function mergeCells(cells, multipier) {
+      //   activeCellIndex = 0;
+      //   while (activeCellIndex < cellsLength) {
+      //     for (i of range(1, multipier)) {
+      //       console.log(cells[activeCellIndex]);
+      //       cells[activeCellIndex - 1].style.borderLeft = "none";
+      //       cells[activeCellIndex].style.borderRight = "none";
+      //       activeCellIndex++;
+      //     }
+      //     activeCellIndex++;
+      //   }
+      // }
     </script>
   </body>
 </html>
