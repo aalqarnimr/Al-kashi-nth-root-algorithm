@@ -40,14 +40,35 @@
       }
       .table_container {
         display: flex;
-        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        flex: 1 1 0px;
       }
       tr,
       thead,
       th {
         border: 1px solid black;
       }
-
+      .root-result {
+        direction: ltr;
+        padding-left: 20px;
+        margin-bottom: 10px;
+      }
+      table {
+        border-top: none;
+        border-left: none;
+        border-right: none;
+      }
+      .resultRow th {
+        border-top: none;
+        border-bottom: none;
+      }
+      .resultRow th:first-of-type {
+        border-right: none;
+      }
+      .resultRow th:last-of-type {
+        border-left: none;
+      }
     </style>
   </head>
   <body>
@@ -68,25 +89,43 @@
     <hr />
     <div class="table_container">
       <div class="root-result">
-
+        <span>first</span>
       </div>
       <table>
         <thead>
-          <tr></tr>
+          <tr class="resultRow"></tr>
+          <tr class="headRow"></tr>
         </thead>
       </table>
     </div>
     <script>
+      const addCSS = (css) =>
+        (document.head.appendChild(document.createElement("style")).innerHTML =
+          css);
       function startAlgorithm() {
-        resetTable()
+        resetTable();
         var whole = document.getElementById("whole").value;
         var power = document.getElementById("root-power").valueAsNumber;
         tHeads = document.querySelectorAll("th");
         numbers = getDividedNumbers(whole);
         mergedNumbers = mergeNumbers(numbers, power);
         console.log(mergedNumbers);
-        headRow = document.querySelector("thead > tr");
-        createRowCells(mergedNumbers, headRow, true);
+        headRow = document.querySelector(".headRow");
+        resultRow = document.querySelector(".resultRow");
+        createRowCells(
+          numbers,
+          headRow,
+          true,
+          power - mergedNumbers[mergedNumbers.length - 1].toString().length
+        );
+        createRowCells([], resultRow, true, headRow.children.length, "");
+        firstNumber = headRow.lastChild;
+        resultNumbersElement = document.querySelector(".root-result");
+        tableElement = document.querySelector("table");
+        setWidth(resultNumbersElement, tableElement);
+        removeBorder(headRow.children, power);
+
+        console.log(firstNumber.innerHTML);
       }
       function getDividedNumbers(number) {
         var numbers = [];
@@ -125,23 +164,67 @@
         leastRoot = Math.floor(Math.pow(number, 1 / power));
         return leastRoot;
       }
-      function createRowCells(numbersArr, row, isHead) {
+      function* range(start, end) {
+        for (let i = start; i < end; i++) {
+          yield i;
+        }
+      }
+      function createRowCells(
+        numbersArr,
+        row,
+        isHead,
+        extraCells = 0,
+        extraCellsContent = 0
+      ) {
         if (isHead) {
           element = "th";
         } else {
           element = "td";
         }
+        console.log(extraCells);
         for (number of numbersArr) {
           tableCell = document.createElement(element);
           tableCell.appendChild(document.createTextNode(number));
           row.appendChild(tableCell);
         }
+        for (i of range(0, extraCells)) {
+          tableCell = document.createElement(element);
+          tableCell.appendChild(document.createTextNode(extraCellsContent));
+          row.appendChild(tableCell);
+        }
       }
-      function resetTable(){
-        tableHeadRow = document.querySelector("thead > tr");
-        tableHeadRow.innerHTML = null;
+      function resetTable() {
+        tableHeadRows = document.querySelectorAll("thead tr");
+        for (row of tableHeadRows) {
+          row.innerHTML = null;
+        }
       }
-      
+      function setWidth(element, widthElement) {
+        widthOfELement = widthElement.offsetWidth;
+        element.style.width = widthOfELement + "px";
+      }
+      function printSpacing(number, width) {}
+      function removeBorder(cells, multipier) {
+        activeCellIndex = 1;
+        cellsLength = cells.length;
+        console.log(cells[0]);
+        while (activeCellIndex < cellsLength) {
+          for (i of range(1, multipier)) {
+            cells[activeCellIndex - 1].style.borderLeft = "none";
+            cells[activeCellIndex].style.borderRight = "none";
+            activeCellIndex++;
+          }
+          activeCellIndex++;
+        }
+      }
+      function mergeCells(cells, multipier) {
+        activeCellIndex = 0;
+        for (i of range(1, multipier)) {
+          console.log(cells[activeCellIndex]);
+          cells[activeCellIndex].css("border-left", "none");
+          cells[activeCellIndex + 1].css("border-right", "none");
+        }
+      }
     </script>
   </body>
 </html>
