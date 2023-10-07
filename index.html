@@ -18,9 +18,6 @@
       form {
         margin: 20px;
       }
-      table {
-        border: 1px solid black;
-      }
       th {
         padding: 15px;
       }
@@ -38,12 +35,17 @@
         padding-right: 15px;
         padding: 25px;
         margin: 0;
+        display: flex;
       }
       .table_container {
         display: flex;
         align-items: center;
         flex-direction: column;
         flex: 1 1 0px;
+        max-width: 100vw;
+        width: 100vw;
+        overflow-x: auto;
+        overflow-y: auto;
       }
       tr,
       thead,
@@ -56,9 +58,13 @@
         margin-bottom: 10px;
       }
       table {
+        border: 1px solid black;
         border-top: none;
         border-left: none;
         border-right: none;
+        overflow-x: auto;
+        overflow-y: auto;
+        max-width: 100vw;
       }
       .resultRow th {
         border-top: none;
@@ -75,15 +81,14 @@
         border-left: 1px solid black;
         border-right: 1px solid black;
         text-align: center;
+        padding: 8px;
       }
       tbody tr td:last-of-type,
       tfoot tr td:last-of-type {
         border-left: 1px solid black;
       }
-      tbody tr td {
-        padding: 15px;
-      }
-      tfoot tr td {
+      tbody tr:last-of-type td {
+        padding: 30px;
       }
     </style>
   </head>
@@ -172,7 +177,7 @@
         removeBorder(bodyTable.children[0].children, power);
         borderAroundNumber(bodyTable.children[0].children);
 
-        subtractResult =mergedNumbers[numOfmerged-1]-leastNthpowered;
+        subtractResult = mergedNumbers[numOfmerged - 1] - leastNthpowered;
         subResultList = getDividedNumbers(subtractResult);
         bodyRow = document.createElement("tr");
         bodyTable.appendChild(bodyRow);
@@ -189,23 +194,22 @@
         removeBorder(bodyTable.children[1].children, power);
 
         //---------------------empty rows---------------------------------------
-        for (i of range(1, 3)) {
-          emptyBodyRow = document.createElement("tr");
-          bodyTable.appendChild(emptyBodyRow);
-          createRowCells([], emptyBodyRow, false, maxWidth, "  ");
+        emptyBodyRow = document.createElement("tr");
+        bodyTable.appendChild(emptyBodyRow);
+        createRowCells([], emptyBodyRow, false, maxWidth, "  ");
 
-          removeBorder(emptyBodyRow.children, power);
-        }
+        removeBorder(emptyBodyRow.children, power);
+
         lastDigit = resultRow.children[
           resultRow.children.length - 1
         ].innerText = leasthNth;
-        
+
         // ---------------------footer------------------------------------------
         tableFooterElement = document.querySelector("tfoot");
         footerRow = document.createElement("tr");
         tableFooterElement.appendChild(footerRow);
         binomialCoefficientsList = binomialCoefficients(power);
-        footerNum = leasthNth * binomialCoefficientsList[1];
+        footerNum = leasthNth;
         listFooterNum = getDividedNumbers(footerNum);
         console.log(footerNum);
         createRowCells(
@@ -226,13 +230,8 @@
       // .....................................................................
       // .....................................................................
       function getDividedNumbers(number) {
-        var numbers = [];
-        var i = 0;
-        while (number > 0) {
-          numbers[i] = number % 10;
-          number = Math.floor(number / 10);
-          i++;
-        }
+        var numbers = number.toString().split("").reverse();
+        console.log(numbers);
         return numbers;
       }
       function mergeNumbers(numbers, power) {
