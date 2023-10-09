@@ -201,7 +201,7 @@
         emptyBodyRow = document.createElement("tr");
         emptyBodyRow.setAttribute("class", "emptyRow");
         bodyTable.appendChild(emptyBodyRow);
-        // createRowCells([], emptyBodyRow, false, maxWidth, "");
+        createRowCells([], emptyBodyRow, false, maxWidth, "");
 
         removeBorder(emptyBodyRow.children, power);
         console.log(emptyBodyRow);
@@ -229,39 +229,49 @@
         );
         removeBorder(tableFooterElement.children[0].children, power);
         borderAroundNumber(tableFooterElement.children[0].children, true);
-        let nextFooterNum = footerNum * 2 * 10 + solutionWholeList[1];
-        let nextFooterNumList = getDividedNumbers(nextFooterNum);
-        console.log(footerNum);
-        footerRow = document.createElement("tr");
-        tableFooterElement.prepend(footerRow);
-        createRowCells(
-          nextFooterNumList,
-          tableFooterElement.children[0],
-          false,
-          headRow.children.length - power - 2,
-          "",
-          "before-maxed",
-          1,
-          maxWidth
-        );
-        removeBorder(tableFooterElement.children[0].children, power);
-        borderAroundNumber(tableFooterElement.children[0].children, true);
-        appendToRow(resultRow, solutionWholeList[1]);
-        firstFooterCell = footerRow.children[headRow.children.length - power];
-        firstFooterCell.style.borderTop = null;
-        multiplyResult = nextFooterNum * solutionWholeList[1];
-        console.log(multiplyResult);
-        multiplyResultList = getDividedNumbers(multiplyResult);
-        let multiplyRow=createMaxedRow(multiplyResultList,NumberIndex(subtractRow)-power);
-        bodyTable.append(multiplyRow);
-        console.log(multiplyResultList);
-        let remainingWhole = 100*subtractResult + mergedNumbers[numOfmerged - 1];
-        let subtract2 = remainingWhole - multiplyResult;
-        let subtract2List = getDividedNumbers(subtract2);
-        subtract2Row = createMaxedRow(subtract2List,maxWidth-2*power);
-        bodyTable.append(subtract2Row);
-        borderAroundNumber(subtract2Row.children,true);
-
+        footerNum = footerNum * 2;
+        let oldFooterRow = footerRow;
+        for (let i = 1; i < solutionWholeList.length; i++) {
+          oldFooterRow = footerRow;
+          footerNum = footerNum * 10 + solutionWholeList[i];
+          let nextFooterNumList = getDividedNumbers(footerNum);
+          footerRow = document.createElement("tr");
+          tableFooterElement.prepend(footerRow);
+          createRowCells(
+            nextFooterNumList,
+            footerRow,
+            false,
+            NumberIndex(oldFooterRow) - 2,
+            "",
+            "before-maxed",
+            1,
+            maxWidth
+          );
+          removeBorder(footerRow.children, power);
+          appendToRow(resultRow, solutionWholeList[i]);
+          lastFooterCells = [
+            footerRow.children[NumberIndex(oldFooterRow) - 1],
+            footerRow.children[NumberIndex(oldFooterRow) - 2],
+          ];
+          borderAroundNumber(lastFooterCells, true);
+          multiplyResult = footerNum * solutionWholeList[i];
+          multiplyResultList = getDividedNumbers(multiplyResult);
+          let multiplyRow = createMaxedRow(
+            multiplyResultList,
+            NumberIndex(footerRow)
+          );
+          bodyTable.append(multiplyRow);
+          let remainingWhole =
+            100 * subtractResult + mergedNumbers[numOfmerged - 1- i];
+          console.log(mergedNumbers[numOfmerged - 1 - i]);
+          subtractResult = remainingWhole - multiplyResult;
+          let subtract2List = getDividedNumbers(subtractResult);
+          subtractRow = createMaxedRow(subtract2List, NumberIndex(footerRow));
+          bodyTable.append(subtractRow);
+          borderAroundNumber(subtractRow.children, true);
+          footerNum = footerNum + solutionWholeList[i];
+        }
+        bodyTable.append(emptyBodyRow);
       }
       // .....................................................................
       // .....................................................................
@@ -471,8 +481,8 @@
         return -1;
       }
       function createSubtractRow(num1, num2, offset) {
-        let subtractResult = num1 - num2;
-        let subResultList = getDividedNumbers(subtractResult);
+        let subtractResults = num1 - num2;
+        let subResultList = getDividedNumbers(subtractResults);
         newRow = createMaxedRow(subResultList, offset);
         shiftRow(newRow, offset);
         return newRow;
