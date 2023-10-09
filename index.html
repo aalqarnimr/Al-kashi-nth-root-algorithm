@@ -90,6 +90,9 @@
       tbody tr:last-of-type td {
         padding: 30px;
       }
+      .algorithm-result, .exact-result {
+        margin-right: 20px;
+      }
     </style>
   </head>
   <body>
@@ -118,6 +121,33 @@
         <tfoot></tfoot>
       </table>
     </div>
+    <hr />
+    <p class="algorithm-result">
+      ناتج الخوارزمية مع التقريب:
+      <math>
+        <mfrac>
+          <msup>
+            <mi class="numerator"></mi>
+          </msup>
+          <msup>
+            <mi class="denominator"></mi>
+          </msup>
+        </mfrac>
+      </math>
+      <b class="whole-result"></b>
+      ≈ <b class="approximate-result"></b>
+    </p>
+    <p class="exact-result">
+      الناتج الحقيقي:
+      <math>
+        <mroot>
+            <mi class="under-root"></mi>
+            <mn class="root-degree"></mn>
+        </mroot>    
+    </math>
+    ≈ <b class="exact-result-solution"></b>
+    </p>
+
     <script>
       const addCSS = (css) =>
         (document.head.appendChild(document.createElement("style")).innerHTML =
@@ -262,7 +292,7 @@
           );
           bodyTable.append(multiplyRow);
           let remainingWhole =
-            100 * subtractResult + mergedNumbers[numOfmerged - 1- i];
+            100 * subtractResult + mergedNumbers[numOfmerged - 1 - i];
           console.log(mergedNumbers[numOfmerged - 1 - i]);
           subtractResult = remainingWhole - multiplyResult;
           let subtract2List = getDividedNumbers(subtractResult);
@@ -272,6 +302,25 @@
           footerNum = footerNum + solutionWholeList[i];
         }
         bodyTable.append(emptyBodyRow);
+        //--------------------------------------calculate----------------------------------------------------------------------------
+        let powerDiffrence = Math.pow(solutionWhole+1,power)-Math.pow(solutionWhole,power);
+        let approximateFraction = subtractResult/powerDiffrence;
+        let algWholeElement = document.querySelector(".whole-result");
+        algWholeElement.innerText = solutionWhole;
+        let numeratorA = document.querySelector(".numerator");
+        console.log(numeratorA);
+        numeratorA.innerHTML = subtractResult;
+        let denominatorA = document.querySelector(".denominator");
+        denominatorA.innerHTML = powerDiffrence;
+        let approximateReslt = document.querySelector(".approximate-result");
+        approximateReslt.innerText = approximateFraction+solutionWhole;
+        let underRootElement = document.querySelector(".under-root");
+        let rootPowerElement = document.querySelector(".root-degree");
+        let exactResultElement = document.querySelector(".exact-result-solution");
+        underRootElement.innerHTML = whole;
+        rootPowerElement.innerHTML = power;
+        exactResultElement.innerText = solution;
+
       }
       // .....................................................................
       // .....................................................................
