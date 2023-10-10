@@ -87,11 +87,15 @@
       tfoot tr td:last-of-type {
         border-left: 1px solid black;
       }
-      tbody tr:last-of-type td {
+      .emptyRow td {
         padding: 30px;
       }
-      .algorithm-result, .exact-result {
+      .algorithm-result,
+      .exact-result {
         margin-right: 20px;
+      }
+      tbody tr.end-row td{
+        border-bottom: 3px double black;
       }
     </style>
   </head>
@@ -141,11 +145,11 @@
       الناتج الحقيقي:
       <math>
         <mroot>
-            <mi class="under-root"></mi>
-            <mn class="root-degree"></mn>
-        </mroot>    
-    </math>
-    ≈ <b class="exact-result-solution"></b>
+          <mi class="under-root"></mi>
+          <mn class="root-degree"></mn>
+        </mroot>
+      </math>
+      ≈ <b class="exact-result-solution"></b>
     </p>
 
     <script>
@@ -169,6 +173,7 @@
         numOfmerged = mergedNumbers.length;
         headRow = document.querySelector(".headRow");
         resultRow = document.querySelector(".resultRow");
+        bodyTable = document.querySelector("tbody");
         createRowCells(
           numbers,
           headRow,
@@ -187,14 +192,25 @@
         maxWidth = headRow.children.length;
         firstNumber = headRow.lastChild;
         tableElement = document.querySelector("table");
-        //-------------------steps rows-------------------------------------------
-        removeBorder(headRow.children, power);
+        tableFooterElement = document.querySelector("tfoot");
         let [leasthNth, leastNthpowered] = [
           solutionWholeList[0],
           solutionPoweredList[0],
         ];
+        //---------------------empty rows---------------------------------------
+        emptyBodyRow = document.createElement("tr");
+        emptyBodyRow.setAttribute("class", "emptyRow");
+        createRowCells([], emptyBodyRow, false, maxWidth, "");
+
+        removeBorder(emptyBodyRow.children, power);
+        console.log(emptyBodyRow);
+
+        lastDigit = resultRow.children[
+          resultRow.children.length - 1
+        ].innerText = leasthNth;
+        //-------------------steps rows-------------------------------------------
+        removeBorder(headRow.children, power);
         squaredList = getDividedNumbers(leastNthpowered);
-        bodyTable = document.querySelector("tbody");
         bodyRow = document.createElement("tr");
         bodyTable.appendChild(bodyRow);
 
@@ -208,8 +224,9 @@
           1,
           maxWidth
         );
-        removeBorder(bodyTable.children[0].children, power);
-        borderAroundNumber(bodyTable.children[0].children);
+        removeBorder(bodyRow.children, power);
+        borderAroundNumber(bodyRow.children);
+        console.log(bodyRow.children);
 
         let subtractResult = mergedNumbers[numOfmerged - 1] - leastNthpowered;
         subResultList = getDividedNumbers(subtractResult);
@@ -227,90 +244,80 @@
         );
         removeBorder(subtractRow.children, power);
 
-        //---------------------empty rows---------------------------------------
-        emptyBodyRow = document.createElement("tr");
-        emptyBodyRow.setAttribute("class", "emptyRow");
-        bodyTable.appendChild(emptyBodyRow);
-        createRowCells([], emptyBodyRow, false, maxWidth, "");
-
-        removeBorder(emptyBodyRow.children, power);
-        console.log(emptyBodyRow);
-
-        lastDigit = resultRow.children[
-          resultRow.children.length - 1
-        ].innerText = leasthNth;
-
         // ---------------------footer------------------------------------------
-        tableFooterElement = document.querySelector("tfoot");
-        footerRow = document.createElement("tr");
-        tableFooterElement.appendChild(footerRow);
-        binomialCoefficientsList = binomialCoefficients(power);
-        footerNum = leasthNth;
-        listFooterNum = getDividedNumbers(footerNum);
-        createRowCells(
-          listFooterNum,
-          tableFooterElement.children[0],
-          false,
-          headRow.children.length - power,
-          "",
-          "before-maxed",
-          1,
-          maxWidth
-        );
-        removeBorder(tableFooterElement.children[0].children, power);
-        borderAroundNumber(tableFooterElement.children[0].children, true);
-        footerNum = footerNum * 2;
-        let oldFooterRow = footerRow;
-        if (power === 2 || power === 1){
-        for (let i = 1; i < solutionWholeList.length; i++) {
-          oldFooterRow = footerRow;
-          footerNum = footerNum * 10 + solutionWholeList[i];
-          let nextFooterNumList = getDividedNumbers(footerNum);
+        if (power === 2 || power === 1) {
           footerRow = document.createElement("tr");
-          tableFooterElement.prepend(footerRow);
+          tableFooterElement.appendChild(footerRow);
+          binomialCoefficientsList = binomialCoefficients(power);
+          footerNum = leasthNth;
+          listFooterNum = getDividedNumbers(footerNum);
           createRowCells(
-            nextFooterNumList,
-            footerRow,
+            listFooterNum,
+            tableFooterElement.children[0],
             false,
-            NumberIndex(oldFooterRow) - 2,
+            headRow.children.length - power,
             "",
             "before-maxed",
             1,
             maxWidth
           );
-          removeBorder(footerRow.children, power);
-          appendToRow(resultRow, solutionWholeList[i]);
-          lastFooterCells = [
-            footerRow.children[NumberIndex(oldFooterRow) - 1],
-            footerRow.children[NumberIndex(oldFooterRow) - 2],
-          ];
-          borderAroundNumber(lastFooterCells, true);
+          removeBorder(tableFooterElement.children[0].children, power);
+          borderAroundNumber(tableFooterElement.children[0].children, true);
+          footerNum = footerNum * 2;
+          let oldFooterRow = footerRow;
+          for (let i = 1; i < solutionWholeList.length; i++) {
+            oldFooterRow = footerRow;
+            footerNum = footerNum * 10 + solutionWholeList[i];
+            let nextFooterNumList = getDividedNumbers(footerNum);
+            footerRow = document.createElement("tr");
+            tableFooterElement.prepend(footerRow);
+            createRowCells(
+              nextFooterNumList,
+              footerRow,
+              false,
+              NumberIndex(oldFooterRow) - 2,
+              "",
+              "before-maxed",
+              1,
+              maxWidth
+            );
+            removeBorder(footerRow.children, power);
+            appendToRow(resultRow, solutionWholeList[i]);
+            lastFooterCells = [
+              footerRow.children[NumberIndex(oldFooterRow) - 1],
+              footerRow.children[NumberIndex(oldFooterRow) - 2],
+            ];
+            borderAroundNumber(lastFooterCells, true);
 
-          multiplyResult = footerNum * solutionWholeList[i];
-          multiplyResultList = getDividedNumbers(multiplyResult);
-          let multiplyRow = createMaxedRow(
-            multiplyResultList,
-            NumberIndex(footerRow)
-          );
-          bodyTable.append(multiplyRow);
-          let remainingWhole =
-            100 * subtractResult + mergedNumbers[numOfmerged - 1 - i];
-          console.log(mergedNumbers[numOfmerged - 1 - i]);
-          subtractResult = remainingWhole - multiplyResult;
-          let subtract2List = getDividedNumbers(subtractResult);
-          subtractRow = createMaxedRow(subtract2List, NumberIndex(footerRow));
-          bodyTable.append(subtractRow);
-          borderAroundNumber(subtractRow.children, true);
-          footerNum = footerNum + solutionWholeList[i];
+            multiplyResult = footerNum * solutionWholeList[i];
+            multiplyResultList = getDividedNumbers(multiplyResult);
+            let multiplyRow = createMaxedRow(
+              multiplyResultList,
+              NumberIndex(footerRow)
+            );
+            bodyTable.append(multiplyRow);
+            let remainingWhole =
+              100 * subtractResult + mergedNumbers[numOfmerged - 1 - i];
+            console.log(mergedNumbers[numOfmerged - 1 - i]);
+            subtractResult = remainingWhole - multiplyResult;
+            let subtract2List = getDividedNumbers(subtractResult);
+            subtractRow = createMaxedRow(subtract2List, NumberIndex(footerRow));
+            bodyTable.append(subtractRow);
+            borderAroundNumber(subtractRow.children, true);
+            footerNum = footerNum + solutionWholeList[i];
+          }
+        } else if (power >= 2) {
+          subtractRow.setAttribute("class", "end-row");
+          createSection(power + 1, true);
+          for (let i = 0; i < power - 2; i++) {
+            createSection(6+2*i);
+          }
         }
-      }
-      else if (power >= 2){
-
-      }
         bodyTable.append(emptyBodyRow);
         //--------------------------------------calculate----------------------------------------------------------------------------
-        let powerDiffrence = Math.pow(solutionWhole+1,power)-Math.pow(solutionWhole,power);
-        let approximateFraction = subtractResult/powerDiffrence;
+        let powerDiffrence =
+          Math.pow(solutionWhole + 1, power) - Math.pow(solutionWhole, power);
+        let approximateFraction = subtractResult / powerDiffrence;
         let algWholeElement = document.querySelector(".whole-result");
         algWholeElement.innerText = solutionWhole;
         let numeratorA = document.querySelector(".numerator");
@@ -319,14 +326,15 @@
         let denominatorA = document.querySelector(".denominator");
         denominatorA.innerHTML = powerDiffrence;
         let approximateReslt = document.querySelector(".approximate-result");
-        approximateReslt.innerText = approximateFraction+solutionWhole;
+        approximateReslt.innerText = approximateFraction + solutionWhole;
         let underRootElement = document.querySelector(".under-root");
         let rootPowerElement = document.querySelector(".root-degree");
-        let exactResultElement = document.querySelector(".exact-result-solution");
+        let exactResultElement = document.querySelector(
+          ".exact-result-solution"
+        );
         underRootElement.innerHTML = whole;
         rootPowerElement.innerHTML = power;
         exactResultElement.innerText = solution;
-
       }
       // .....................................................................
       // .....................................................................
@@ -517,7 +525,7 @@
       }
       function appendToRow(row, content) {
         let firstOccurance = NumberIndex(row);
-        if (firstOccurance != -1||firstOccurance !=0) {
+        if (firstOccurance != -1 || firstOccurance != 0) {
           row.children[firstOccurance - 1].innerText = content;
         } else {
           row.children[0].innerText = content;
@@ -541,116 +549,119 @@
         shiftRow(newRow, offset);
         return newRow;
       }
-      function transferRowNumbers(row, targetRow){
+      function transferRowNumbers(row, targetRow) {
         let rowChildren = row.children;
         let targetChildren = targetRow.children;
         let index = 0;
-        for (cell of rowChildren){
-          if (cell.innerText !=""){
+        for (cell of rowChildren) {
+          if (cell.innerText != "") {
             targetChildren[index].innerText = cell.innerText;
           }
         }
       }
-      function clearRow(targetRow){
+      function clearRow(targetRow) {
         let targetChildren = targetRow.children;
-        for (cell of targetChildren){
+        for (cell of targetChildren) {
           cell.innerText = "";
         }
       }
       function transferRow(row, targetRow) {
         clearRow(targetRow);
-        transferRowNumbers(row,targetRow);
+        transferRowNumbers(row, targetRow);
       }
-      function clearTable(exceptionRows=[]){
-        clearRow(resultRow);
-        for (row of bodyTable.children){
-          if (!exceptionRows.includes(row)){
+      function clearTable(exceptionRows = []) {
+        clearRow(headRow);
+        for (row of bodyTable.children) {
+          if (!exceptionRows.includes(row)) {
             clearRow(row);
           }
         }
-        for (footer of tableFooterElement.children){
-          if (!exceptionRows.includes(footer)){
+        for (footer of tableFooterElement.children) {
+          if (!exceptionRows.includes(footer)) {
             clearRow(footer);
           }
         }
       }
-      function extractNumber(targetRow){
+      function extractNumber(targetRow) {
         let targetChildren = targetRow.children;
         let strNumber = "";
-        for (cell in targetChildren){
-          if (cell.innerText!=""){
-            str=cell.innerText+str;
+        for (cell in targetChildren) {
+          if (cell.innerText != "") {
+            str = cell.innerText + str;
           }
         }
         return parseInt(strNumber);
       }
-      function fillRelative(targetRow,number,down=false,create=false){
+      function fillRelative(targetRow, number, down = false, create = false) {
         let firstIndex = NumberIndex(targetRow);
         let wantedRow;
-        if (create){
-          wantedRow = createMaxedRow(getDividedNumbers(number),firstIndex);
-          if (down){
+        if (create) {
+          wantedRow = createMaxedRow(getDividedNumbers(number), firstIndex);
+          if (down) {
             targetRow.after(wantedRow);
-          }
-          else {
+          } else {
             targetRow.before(wantedRow);
           }
-        }
-        else {
-          wantedRow = getRelativeRow(targetRow,down);
-          multipendToRow(wantedRow,number,firstIndex);
+        } else {
+          wantedRow = getRelativeRow(targetRow, down);
+          multipendToRow(wantedRow, number, firstIndex);
         }
         return wantedRow;
       }
-      function getRelativeRow(targetRow,down = false){
+      function getRelativeRow(targetRow, down = false) {
         let bodyRows = bodyTable.children;
         let adjacentRow;
         const targetRowIndex = Array.from(bodyRows).indexOf(targetRow);
-        if (down){
-          adjacentRow = bodyRows[targetRowIndex+1];
-        }
-        else {
-          adjacentRow = bodyRows[targetRowIndex-1];
+        if (down) {
+          adjacentRow = bodyRows[targetRowIndex + 1];
+        } else {
+          adjacentRow = bodyRows[targetRowIndex - 1];
         }
         return adjacentRow;
       }
-      function multipendToRow(row,number,offset=0){
+      function multipendToRow(row, number, offset = 0) {
         let dividedNumbers = getDividedNumbers(number);
         let index = 0;
         let rowChildren = row.children;
-        for (number of dividedNumbers){
-          rowChildren[i+offset].innerText = number;
+        for (number of dividedNumbers) {
+          rowChildren[i + offset].innerText = number;
           i++;
         }
       }
-      function fillRelativeRows(targetRow,numbers,down=false,create=false){
-        for (number of numbers){
-          targetRow = fillRelative(targetRow,number,down,create);
+      function fillRelativeRows(
+        targetRow,
+        numbers,
+        down = false,
+        create = false
+      ) {
+        for (number of numbers) {
+          targetRow = fillRelative(targetRow, number, down, create);
         }
       }
-      function createSection(numberOfRows=0,footer =false){
-        let rows;
+      function createSection(numberOfRows = 0, footer = false) {
+        let rows=[];
         let row;
-        for (let i=0;i<numberOfRows;i++){
+        for (let i = 0; i < numberOfRows; i++) {
           row = createEmptyRow();
-          if (footer){
+          if (footer) {
             tableFooterElement.append(row);
-          }
-          else {
+          } else {
             bodyTable.append(row);
           }
           rows.push(row);
         }
-        let endRow = rows[numberOfRows-1];
-        endRow.setAttribute("class", "end_row");
-        doubleBorderBelow(endRow);
+        let endRow = rows[numberOfRows - 1];
+        endRow.setAttribute("class", "end-row");
+        // if (!footer){
+        //   doubleBorderBelow(endRow);
+        // }
       }
-      function doubleBorderBelow(row){
-        let rowChildren = row.children;
-        for (cell in rowChildren){
-          cell.style.borderBottom = "1px double black";
-        }
-      }
+      // function doubleBorderBelow(row) {
+      //   let rowChildren = row.children;
+      //   for (cell of rowChildren) {
+      //     cell.style.borderBottom = "3px double black";
+      //   }
+      // }
     </script>
   </body>
 </html>
