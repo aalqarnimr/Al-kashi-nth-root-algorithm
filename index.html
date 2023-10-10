@@ -261,6 +261,7 @@
         borderAroundNumber(tableFooterElement.children[0].children, true);
         footerNum = footerNum * 2;
         let oldFooterRow = footerRow;
+        if (power === 2 || power === 1){
         for (let i = 1; i < solutionWholeList.length; i++) {
           oldFooterRow = footerRow;
           footerNum = footerNum * 10 + solutionWholeList[i];
@@ -284,6 +285,7 @@
             footerRow.children[NumberIndex(oldFooterRow) - 2],
           ];
           borderAroundNumber(lastFooterCells, true);
+
           multiplyResult = footerNum * solutionWholeList[i];
           multiplyResultList = getDividedNumbers(multiplyResult);
           let multiplyRow = createMaxedRow(
@@ -301,6 +303,10 @@
           borderAroundNumber(subtractRow.children, true);
           footerNum = footerNum + solutionWholeList[i];
         }
+      }
+      else if (power >= 2){
+
+      }
         bodyTable.append(emptyBodyRow);
         //--------------------------------------calculate----------------------------------------------------------------------------
         let powerDiffrence = Math.pow(solutionWhole+1,power)-Math.pow(solutionWhole,power);
@@ -443,7 +449,6 @@
         widthOfELement = widthElement.offsetWidth;
         element.style.width = widthOfELement + "px";
       }
-      function printSpacing(number, width) {}
       function removeBorder(cells, multipier) {
         activeCellIndex = 1;
         cellsLength = cells.length;
@@ -512,7 +517,7 @@
       }
       function appendToRow(row, content) {
         let firstOccurance = NumberIndex(row);
-        if (firstOccurance != -1) {
+        if (firstOccurance != -1||firstOccurance !=0) {
           row.children[firstOccurance - 1].innerText = content;
         } else {
           row.children[0].innerText = content;
@@ -535,6 +540,88 @@
         newRow = createMaxedRow(subResultList, offset);
         shiftRow(newRow, offset);
         return newRow;
+      }
+      function transferRowNumbers(row, targetRow){
+        let rowChildren = row.children;
+        let targetChildren = targetRow.children;
+        let index = 0;
+        for (cell of rowChildren){
+          if (cell.innerText !=""){
+            targetChildren[index].innerText = cell.innerText;
+          }
+        }
+      }
+      function clearRow(targetRow){
+        let targetChildren = targetRow.children;
+        for (cell of targetChildren){
+          cell.innerText = "";
+        }
+      }
+      function transferRow(row, targetRow) {
+        clearRow(targetRow);
+        transferRowNumbers(row,targetRow);
+      }
+      function clearTable(exceptionRows=[]){
+        clearRow(resultRow);
+        for (row of bodyTable.children){
+          if (!exceptionRows.includes(row)){
+            clearRow(row);
+          }
+        }
+        for (footer of tableFooterElement.children){
+          if (!exceptionRows.includes(footer)){
+            clearRow(footer);
+          }
+        }
+      }
+      function extractNumber(targetRow){
+        let targetChildren = targetRow.children;
+        let strNumber = "";
+        for (cell in targetChildren){
+          if (cell.innerText!=""){
+            str=cell.innerText+str;
+          }
+        }
+        return parseInt(strNumber);
+      }
+      function fillRelative(targetRow,number,down=false,create=false){
+        let firstIndex = NumberIndex(targetRow);
+        let wantedRow;
+        if (create){
+          wantedRow = createMaxedRow(getDividedNumbers(number),firstIndex);
+          if (down){
+            targetRow.after(wantedRow);
+          }
+          else {
+            targetRow.before(wantedRow);
+          }
+        }
+        else {
+          wantedRow = getRelativeRow(targetRow,down);
+          multipendToRow(wantedRow,number,firstIndex);
+        }
+
+      }
+      function getRelativeRow(targetRow,down = false){
+        let bodyRows = bodyTable.children;
+        let adjacentRow;
+        const targetRowIndex = Array.from(bodyRows).indexOf(targetRow);
+        if (down){
+          adjacentRow = bodyRows[targetRowIndex+1];
+        }
+        else {
+          adjacentRow = bodyRows[targetRowIndex-1];
+        }
+        return adjacentRow;
+      }
+      function multipendToRow(row,number,offset=0){
+        let dividedNumbers = getDividedNumbers(number);
+        let index = 0;
+        let rowChildren = row.children;
+        for (number of dividedNumbers){
+          rowChildren[i+offset].innerText = number;
+          i++;
+        }
       }
     </script>
   </body>
