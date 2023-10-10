@@ -600,7 +600,7 @@
           wantedRow = getRelativeRow(targetRow,down);
           multipendToRow(wantedRow,number,firstIndex);
         }
-
+        return wantedRow;
       }
       function getRelativeRow(targetRow,down = false){
         let bodyRows = bodyTable.children;
@@ -621,6 +621,34 @@
         for (number of dividedNumbers){
           rowChildren[i+offset].innerText = number;
           i++;
+        }
+      }
+      function fillRelativeRows(targetRow,numbers,down=false,create=false){
+        for (number of numbers){
+          targetRow = fillRelative(targetRow,number,down,create);
+        }
+      }
+      function createSection(numberOfRows=0,footer =false){
+        let rows;
+        let row;
+        for (let i=0;i<numberOfRows;i++){
+          row = createEmptyRow();
+          if (footer){
+            tableFooterElement.append(row);
+          }
+          else {
+            bodyTable.append(row);
+          }
+          rows.push(row);
+        }
+        let endRow = rows[numberOfRows-1];
+        endRow.setAttribute("class", "end_row");
+        doubleBorderBelow(endRow);
+      }
+      function doubleBorderBelow(row){
+        let rowChildren = row.children;
+        for (cell in rowChildren){
+          cell.style.borderBottom = "1px double black";
         }
       }
     </script>
