@@ -340,7 +340,8 @@
           }
           let lastRowsLength = lastRows.length;
           showStep();
-          console.log(tableStateList[0]);
+          showStep();
+          tableElement.replaceWith(tableStateList[1]);
 
           //-------------------------------------------------------------------------------
           function showStep() {
@@ -350,6 +351,9 @@
               power
             );
             let shiftedMultipliers = multipiers.filter((e, i) => i != 0);
+            // if (step!=0){
+            //   shiftedMultipliers = multipiers.filter((e,i)=>i!=multipiers.length-1);
+            // }
             multipendToRow(
               footerLastRow,
               multipiers[0],
@@ -369,6 +373,10 @@
             }
             binomialCoefficientList.push(shiftedMultipliers.pop());
             let previousList = shiftedMultipliers;
+            if (step!=0){
+              previousList = multipiers.filter((e,i)=>i!=multipiers.length-1);
+            }
+            console.log(previousList);
             for (let i = 1; i <= lastRowsLength; i++) {
               let activeSecRow = lastRows[lastRowsLength - i];
               let startingNumber = poweredList[i];
@@ -396,15 +404,16 @@
                 shiftRow(clonedRow, power - i - 1);
               }
             }
+            if (step!=0){
+              appendToRow(resultRow,solutionWholeList[step]);
+            }
+
             tableCopy = tableElement.cloneNode(true);
             tableStateList.push(tableCopy);
-            poweredList = binomialCoefficientList.map((e, i) =>
-              Math.pow(e, i + 1)
+            poweredList = binomialCoefficientList.map((e, i) => e* Math.pow(10, i + 1)
             );
             binomialCoefficientList = [];
             addedValue += poweredList[0];
-            let tempList = [];
-            let temp2 = mergedNumbers.filter((e, i) => i > step);
 
             whole =
               whole -
@@ -432,6 +441,13 @@
             clearTable();
             //whole = whole - solutionPoweredList[step]*Math.pow(10,(lastStep-step)*power);
             multipendToRow(headRow, whole);
+            multipendToRow(bodyRow, poweredResult, (lastStep - step) * power);
+            multipendToRow(
+              subtractRow,
+              subtractResult,
+              (lastStep - step) * power
+            );
+
           }
         }
         //--------------------------------------calculate----------------------------------------------------------------------------
@@ -631,7 +647,10 @@
         let rowCells = row.children;
         let firstNumberIndex = NumberIndex(row);
         console.log(rowCells[firstNumberIndex].innerText);
-        while (firstNumberIndex<maxWidth&&rowCells[firstNumberIndex].innerText != "") {
+        while (
+          firstNumberIndex < maxWidth &&
+          rowCells[firstNumberIndex].innerText != ""
+        ) {
           rowCells[firstNumberIndex - offset].innerText =
             rowCells[firstNumberIndex].innerText;
           rowCells[firstNumberIndex].innerText = "";
@@ -686,8 +705,14 @@
       }
       function clearRow(targetRow) {
         let targetChildren = targetRow.children;
+        let isEndRow = targetRow.getAttribute("class")=="end-row";
+        let isHeadRow = targetRow == headRow;
         for (cell of targetChildren) {
           cell.innerText = "";
+          if (!isEndRow&&!isHeadRow){
+            cell.style.borderTop = "none";
+            cell.style.borderBottom = "none";
+          }
         }
       }
       function transferRow(row, targetRow) {
@@ -781,16 +806,8 @@
         let endRow = rows[numberOfRows - 1];
         endRow.setAttribute("class", "end-row");
         return endRow;
-        // if (!footer){
-        //   doubleBorderBelow(endRow);
-        // }
       }
-      // function doubleBorderBelow(row) {
-      //   let rowChildren = row.children;
-      //   for (cell of rowChildren) {
-      //     cell.style.borderBottom = "3px double black";
-      //   }
-      // }
+
       function multipierOf(number, addedNum, multipier) {
         let multipierList = [];
         for (let i = 1; i <= multipier; i++) {
