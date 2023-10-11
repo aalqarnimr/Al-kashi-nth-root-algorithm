@@ -94,7 +94,7 @@
       .exact-result {
         margin-right: 20px;
       }
-      tbody tr.end-row td{
+      tbody tr.end-row td {
         border-bottom: 3px double black;
       }
     </style>
@@ -306,14 +306,53 @@
             borderAroundNumber(subtractRow.children, true);
             footerNum = footerNum + solutionWholeList[i];
           }
+          bodyTable.append(emptyBodyRow);
         } else if (power >= 2) {
+          let binomialCoefficientList = [];
+          let poweredList = getNumberPowerList(solutionWholeList[0]);
+          let addedValue = 0;
           subtractRow.setAttribute("class", "end-row");
-          createSection(power + 1, true);
+
+          let footerLastRow = createSection(power + 1, true);
+          let lastRows = [];
           for (let i = 0; i < power - 2; i++) {
-            createSection(6+2*i);
+            lastRows.push(createSection(6 + 2 * i));
+          }
+          let lastRowsLength = lastRows.length;
+          let multipiers = multipierOf(solutionWholeList[0], addedValue, power);
+          let shiftedMultipliers = multipiers.filter((e, i) => i != 0);
+          multipendToRow(footerLastRow, multipiers[0], maxWidth - power);
+          let filledRows = fillRelativeRows(footerLastRow, shiftedMultipliers);
+          filledRows.forEach((e) => borderAroundNumber(e.children));
+          let clonedRow = fillRelative(
+            filledRows[filledRows.length - 1],
+            multipiers[power - 1]
+          );
+          shiftRow(clonedRow, power - 1);
+          binomialCoefficientList.push(shiftedMultipliers.pop());
+          let previousList = shiftedMultipliers;
+          for (let i = 1; i <= lastRowsLength; i++) {
+            let activeSecRow = lastRows[lastRowsLength - i];
+            let startingNumber = poweredList[i];
+            multipendToRow(activeSecRow, startingNumber, maxWidth - power);
+            let operationList = nextSectionOperations(
+              startingNumber,
+              previousList,
+              solutionWholeList[0]
+            );
+            filledRows = fillRelativeRows(activeSecRow, operationList);
+            let filteredRows = filledRows.filter((e, i) => i % 2 == 1);
+            filteredRows.forEach((e) => borderAroundNumber(e.children));
+            let lastResult = operationList.pop();
+            binomialCoefficientList.push(lastResult);
+            previousList = SectionList(operationList);
+            clonedRow = fillRelative(
+              filledRows[filledRows.length - 1],
+              lastResult
+            );
+            shiftRow(clonedRow, power - i -1);
           }
         }
-        bodyTable.append(emptyBodyRow);
         //--------------------------------------calculate----------------------------------------------------------------------------
         let powerDiffrence =
           Math.pow(solutionWhole + 1, power) - Math.pow(solutionWhole, power);
@@ -603,15 +642,16 @@
             targetRow.before(wantedRow);
           }
         } else {
-          wantedRow = getRelativeRow(targetRow, down);
+          wantedRow = getAdjacentRow(targetRow, down);
           multipendToRow(wantedRow, number, firstIndex);
         }
         return wantedRow;
       }
-      function getRelativeRow(targetRow, down = false) {
-        let bodyRows = bodyTable.children;
+      function getAdjacentRow(targetRow, down = false) {
+        let bodyRows = targetRow.parentElement.children;
         let adjacentRow;
-        const targetRowIndex = Array.from(bodyRows).indexOf(targetRow);
+        let targetRowIndex = Array.from(bodyRows).indexOf(targetRow);
+        console.log(targetRowIndex);
         if (down) {
           adjacentRow = bodyRows[targetRowIndex + 1];
         } else {
@@ -624,8 +664,8 @@
         let index = 0;
         let rowChildren = row.children;
         for (number of dividedNumbers) {
-          rowChildren[i + offset].innerText = number;
-          i++;
+          rowChildren[index + offset].innerText = number;
+          index++;
         }
       }
       function fillRelativeRows(
@@ -634,12 +674,15 @@
         down = false,
         create = false
       ) {
+        let filledRows = [];
         for (number of numbers) {
           targetRow = fillRelative(targetRow, number, down, create);
+          filledRows.push(targetRow);
         }
+        return filledRows;
       }
       function createSection(numberOfRows = 0, footer = false) {
-        let rows=[];
+        let rows = [];
         let row;
         for (let i = 0; i < numberOfRows; i++) {
           row = createEmptyRow();
@@ -652,6 +695,7 @@
         }
         let endRow = rows[numberOfRows - 1];
         endRow.setAttribute("class", "end-row");
+        return endRow;
         // if (!footer){
         //   doubleBorderBelow(endRow);
         // }
@@ -662,6 +706,40 @@
       //     cell.style.borderBottom = "3px double black";
       //   }
       // }
+      function multipierOf(number, addedNum, multipier) {
+        let multipierList = [];
+        for (let i = 1; i <= multipier; i++) {
+          multipierList.push(addedNum + number * i);
+        }
+        return multipierList;
+      }
+      function nextSectionOperations(
+        startingNumber,
+        previousList,
+        solutionNumber
+      ) {
+        let newList = [];
+        previousListLength = previousList.length;
+        for (let i = 0; i < previousListLength; i++) {
+          let addedNumber = previousList[i] * solutionNumber;
+          let newNumber = startingNumber + addedNumber;
+          newList.push(addedNumber);
+          newList.push(newNumber);
+          startingNumber = newNumber;
+        }
+        return newList;
+      }
+      function SectionList(operationList) {
+        let sectionList = operationList.filter((e, i) => i % 2 === 1);
+        return sectionList;
+      }
+      function getNumberPowerList(number) {
+        let powerList = [];
+        for (let i = 1; i < power; i++) {
+          powerList.push(Math.pow(number, i));
+        }
+        return powerList;
+      }
     </script>
   </body>
 </html>
