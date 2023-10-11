@@ -97,6 +97,17 @@
       tbody tr.end-row td {
         border-bottom: 3px double black;
       }
+      .algorithm-result,
+      .exact-result {
+        display: none;
+      }
+      span {
+        margin-right: 25px;
+      }
+      span button {
+        font-size: larger;
+        display: none;
+      }
     </style>
   </head>
   <body>
@@ -115,6 +126,10 @@
       </p>
     </form>
     <hr />
+    <span
+      ><button class="previous">الخطوة السابقة</button
+      ><button class="next" onclick="showStep()">الخطوة التالية</button></span
+    >
     <div class="table_container">
       <table>
         <thead>
@@ -308,52 +323,112 @@
           }
           bodyTable.append(emptyBodyRow);
         } else if (power >= 2) {
+          let nextButton = document.querySelector(".next");
+          let previousButton = document.querySelector(".previous");
+          let step = 0;
+          let tableStateList = [];
+          let lastStep = numOfmerged - 1;
+          document.querySelector("span .next").style.display = "inline";
           let binomialCoefficientList = [];
           let poweredList = getNumberPowerList(solutionWholeList[0]);
           let addedValue = 0;
           subtractRow.setAttribute("class", "end-row");
-
+          let storedWhole = whole;
           let footerLastRow = createSection(power + 1, true);
           let lastRows = [];
+          let targettedWhole = mergedNumbers[numOfmerged-1];
+          let poweredNum = solutionWholeList[0];
           for (let i = 0; i < power - 2; i++) {
             lastRows.push(createSection(6 + 2 * i));
           }
           let lastRowsLength = lastRows.length;
-          let multipiers = multipierOf(solutionWholeList[0], addedValue, power);
-          let shiftedMultipliers = multipiers.filter((e, i) => i != 0);
-          multipendToRow(footerLastRow, multipiers[0], maxWidth - power);
-          let filledRows = fillRelativeRows(footerLastRow, shiftedMultipliers);
-          filledRows.forEach((e) => borderAroundNumber(e.children));
-          let clonedRow = fillRelative(
-            filledRows[filledRows.length - 1],
-            multipiers[power - 1]
-          );
-          shiftRow(clonedRow, power - 1);
-          binomialCoefficientList.push(shiftedMultipliers.pop());
-          let previousList = shiftedMultipliers;
-          for (let i = 1; i <= lastRowsLength; i++) {
-            let activeSecRow = lastRows[lastRowsLength - i];
-            let startingNumber = poweredList[i];
-            multipendToRow(activeSecRow, startingNumber, maxWidth - power);
-            let operationList = nextSectionOperations(
-              startingNumber,
-              previousList,
-              solutionWholeList[0]
+          showStep();
+
+          function showStep() {
+            console.log("walkedhere" + step);
+            console.log(headRow);
+            let multipiers = multipierOf(
+              solutionWholeList[step],
+              addedValue,
+              power
             );
-            filledRows = fillRelativeRows(activeSecRow, operationList);
-            let filteredRows = filledRows.filter((e, i) => i % 2 == 1);
-            filteredRows.forEach((e) => borderAroundNumber(e.children));
-            let lastResult = operationList.pop();
-            binomialCoefficientList.push(lastResult);
-            previousList = SectionList(operationList);
-            clonedRow = fillRelative(
-              filledRows[filledRows.length - 1],
-              lastResult
+            let shiftedMultipliers = multipiers.filter((e, i) => i != 0);
+            multipendToRow(
+              footerLastRow,
+              multipiers[0],
+              maxWidth - (step + 1) * power
             );
-            shiftRow(clonedRow, power - i -1);
+            let filledRows = fillRelativeRows(
+              footerLastRow,
+              shiftedMultipliers
+            );
+            filledRows.forEach((e) => borderAroundNumber(e.children));
+            if (step != lastStep) {
+              let clonedRow = fillRelative(
+                filledRows[filledRows.length - 1],
+                multipiers[power - 1]
+              );
+              shiftRow(clonedRow, power - 1);
+            }
+            binomialCoefficientList.push(shiftedMultipliers.pop());
+            let previousList = shiftedMultipliers;
+            for (let i = 1; i <= lastRowsLength; i++) {
+              let activeSecRow = lastRows[lastRowsLength - i];
+              let startingNumber = poweredList[i];
+              multipendToRow(
+                activeSecRow,
+                startingNumber,
+                maxWidth - (step + 1) * power
+              );
+              let operationList = nextSectionOperations(
+                startingNumber,
+                previousList,
+                solutionWholeList[step]
+              );
+              filledRows = fillRelativeRows(activeSecRow, operationList);
+              let filteredRows = filledRows.filter((e, i) => i % 2 == 1);
+              filteredRows.forEach((e) => borderAroundNumber(e.children));
+              let lastResult = operationList.pop();
+              binomialCoefficientList.push(lastResult);
+              previousList = SectionList(operationList);
+              if (step != lastStep) {
+                clonedRow = fillRelative(
+                  filledRows[filledRows.length - 1],
+                  lastResult
+                );
+                shiftRow(clonedRow, power - i - 1);
+              }
+            }
+            tableCopy = tableElement.cloneNode(true);
+            tableStateList.push(tableCopy);
+            poweredList = binomialCoefficientList.map((e, i) =>
+              Math.pow(e, i + 1)
+            );
+            binomialCoefficientList = [];
+            addedValue += poweredList[0];
+            let tempList = [];
+            let temp2 = mergedNumbers.filter((e,i)=>i>step)
+            
+            whole = whole - solutionPoweredList[step]*Math.pow(10,(lastStep-step)*power);
+            if (step != lastStep) {
+              step += 1;
+            }
+            targettedWhole = targettedWhole*Math.pow(10,power) + mergedNumbers[numOfmerged-step-1];
+
+            poweredNum = poweredNum*10 + solutionWholeList[step];
+            let subtractResult = targettedWhole-Math.pow(poweredNum,power);
+            let poweredResult = targettedWhole - Math.pow(poweredNum-solutionWholeList[step],power)-subtractResult;
+            console.log(poweredResult, subtractResult,targettedWhole,poweredNum);
+            clearTable();
+            //whole = whole - solutionPoweredList[step]*Math.pow(10,(lastStep-step)*power);
+            multipendToRow(headRow,whole);
           }
         }
         //--------------------------------------calculate----------------------------------------------------------------------------
+        let algorithmBlock = document.querySelector(".algorithm-result");
+        let exactBlock = document.querySelector(".exact-result");
+        algorithmBlock.style.display = "block";
+        exactBlock.style.display = "block";
         let powerDiffrence =
           Math.pow(solutionWhole + 1, power) - Math.pow(solutionWhole, power);
         let approximateFraction = subtractResult / powerDiffrence;
@@ -491,6 +566,7 @@
         }
         document.querySelector("tbody").innerHTML = null;
         document.querySelector("tfoot").innerHTML = null;
+        document.querySelector("span button").style.display = "none";
       }
       function setWidth(element, widthElement) {
         widthOfELement = widthElement.offsetWidth;
@@ -739,6 +815,12 @@
           powerList.push(Math.pow(number, i));
         }
         return powerList;
+      }
+      function fillCell(row, offset) {
+        rowChildren = row.children;
+        if (rowChildren[offset].innerText == "") {
+          rowChildren[offset].innerText = " ";
+        }
       }
     </script>
   </body>
