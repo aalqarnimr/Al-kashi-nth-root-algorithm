@@ -218,7 +218,6 @@
         createRowCells([], emptyBodyRow, false, maxWidth, "");
 
         removeBorder(emptyBodyRow.children, power);
-        console.log(emptyBodyRow);
 
         lastDigit = resultRow.children[
           resultRow.children.length - 1
@@ -241,7 +240,6 @@
         );
         removeBorder(bodyRow.children, power);
         borderAroundNumber(bodyRow.children);
-        console.log(bodyRow.children);
 
         let subtractResult = mergedNumbers[numOfmerged - 1] - leastNthpowered;
         subResultList = getDividedNumbers(subtractResult);
@@ -313,7 +311,6 @@
             bodyTable.append(multiplyRow);
             let remainingWhole =
               100 * subtractResult + mergedNumbers[numOfmerged - 1 - i];
-            console.log(mergedNumbers[numOfmerged - 1 - i]);
             subtractResult = remainingWhole - multiplyResult;
             let subtract2List = getDividedNumbers(subtractResult);
             subtractRow = createMaxedRow(subtract2List, NumberIndex(footerRow));
@@ -336,17 +333,17 @@
           let storedWhole = whole;
           let footerLastRow = createSection(power + 1, true);
           let lastRows = [];
-          let targettedWhole = mergedNumbers[numOfmerged-1];
+          let targettedWhole = mergedNumbers[numOfmerged - 1];
           let poweredNum = solutionWholeList[0];
           for (let i = 0; i < power - 2; i++) {
             lastRows.push(createSection(6 + 2 * i));
           }
           let lastRowsLength = lastRows.length;
           showStep();
+          console.log(tableStateList[0]);
 
+          //-------------------------------------------------------------------------------
           function showStep() {
-            console.log("walkedhere" + step);
-            console.log(headRow);
             let multipiers = multipierOf(
               solutionWholeList[step],
               addedValue,
@@ -407,21 +404,34 @@
             binomialCoefficientList = [];
             addedValue += poweredList[0];
             let tempList = [];
-            let temp2 = mergedNumbers.filter((e,i)=>i>step)
-            
-            whole = whole - solutionPoweredList[step]*Math.pow(10,(lastStep-step)*power);
+            let temp2 = mergedNumbers.filter((e, i) => i > step);
+
+            whole =
+              whole -
+              solutionPoweredList[step] *
+                Math.pow(10, (lastStep - step) * power);
             if (step != lastStep) {
               step += 1;
             }
-            targettedWhole = targettedWhole*Math.pow(10,power) + mergedNumbers[numOfmerged-step-1];
+            targettedWhole =
+              targettedWhole * Math.pow(10, power) +
+              mergedNumbers[numOfmerged - step - 1];
 
-            poweredNum = poweredNum*10 + solutionWholeList[step];
-            let subtractResult = targettedWhole-Math.pow(poweredNum,power);
-            let poweredResult = targettedWhole - Math.pow(poweredNum-solutionWholeList[step],power)-subtractResult;
-            console.log(poweredResult, subtractResult,targettedWhole,poweredNum);
+            poweredNum = poweredNum * 10 + solutionWholeList[step];
+            let subtractResult = targettedWhole - Math.pow(poweredNum, power);
+            let poweredResult =
+              targettedWhole -
+              Math.pow(poweredNum - solutionWholeList[step], power) -
+              subtractResult;
+            console.log(
+              poweredResult,
+              subtractResult,
+              targettedWhole,
+              poweredNum
+            );
             clearTable();
             //whole = whole - solutionPoweredList[step]*Math.pow(10,(lastStep-step)*power);
-            multipendToRow(headRow,whole);
+            multipendToRow(headRow, whole);
           }
         }
         //--------------------------------------calculate----------------------------------------------------------------------------
@@ -435,7 +445,6 @@
         let algWholeElement = document.querySelector(".whole-result");
         algWholeElement.innerText = solutionWhole;
         let numeratorA = document.querySelector(".numerator");
-        console.log(numeratorA);
         numeratorA.innerHTML = subtractResult;
         let denominatorA = document.querySelector(".denominator");
         denominatorA.innerHTML = powerDiffrence;
@@ -621,7 +630,8 @@
       function shiftRow(row, offset) {
         let rowCells = row.children;
         let firstNumberIndex = NumberIndex(row);
-        while (rowCells[firstNumberIndex].innerText != "") {
+        console.log(rowCells[firstNumberIndex].innerText);
+        while (firstNumberIndex<maxWidth&&rowCells[firstNumberIndex].innerText != "") {
           rowCells[firstNumberIndex - offset].innerText =
             rowCells[firstNumberIndex].innerText;
           rowCells[firstNumberIndex].innerText = "";
@@ -727,7 +737,6 @@
         let bodyRows = targetRow.parentElement.children;
         let adjacentRow;
         let targetRowIndex = Array.from(bodyRows).indexOf(targetRow);
-        console.log(targetRowIndex);
         if (down) {
           adjacentRow = bodyRows[targetRowIndex + 1];
         } else {
