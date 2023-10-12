@@ -107,6 +107,16 @@
       span button {
         font-size: larger;
         display: none;
+        border-radius: 5px;
+        border-style: none;
+        padding: 5px;
+        background-color: rosybrown;
+      }
+      table tr:nth-child(odd) {
+        background-color: white;
+      }
+      table tr:nth-child(even) {
+        background-color: rgba(213, 213, 213, 0.229);
       }
     </style>
   </head>
@@ -127,8 +137,8 @@
     </form>
     <hr />
     <span
-      ><button class="previous">الخطوة السابقة</button
-      ><button class="next" onclick="showStep()">الخطوة التالية</button></span
+      ><button class="previous" onclick="previousStep()">السابق</button
+      ><button class="next" onclick="nextStep()">التالي</button></span
     >
     <div class="table_container">
       <table>
@@ -320,10 +330,11 @@
           }
           bodyTable.append(emptyBodyRow);
         } else if (power >= 2) {
-          let nextButton = document.querySelector(".next");
-          let previousButton = document.querySelector(".previous");
+          stateIndex = 0;
+          nextButton = document.querySelector(".next");
+          previousButton = document.querySelector(".previous");
           let step = 0;
-          let tableStateList = [];
+          tableStateList = [];
           let lastStep = numOfmerged - 1;
           document.querySelector("span .next").style.display = "inline";
           let binomialCoefficientList = [];
@@ -339,10 +350,14 @@
             lastRows.push(createSection(6 + 2 * i));
           }
           let lastRowsLength = lastRows.length;
+          while (step < lastStep) {
+            showStep();
+          }
           showStep();
-          showStep();
-          showStep();
-          //tableElement.replaceWith(tableStateList[2]);
+          stateLength = tableStateList.length;
+          console.log(tableStateList);
+          tableElement.replaceWith(tableStateList[0]);
+          tableElement = tableStateList[0];
 
           //-------------------------------------------------------------------------------
           function showStep() {
@@ -379,7 +394,6 @@
                 (e, i) => i != multipiers.length - 1
               );
             }
-            console.log(previousList);
             for (let i = 1; i <= lastRowsLength; i++) {
               let activeSecRow = lastRows[lastRowsLength - i];
               let startingNumber = poweredList[i];
@@ -416,50 +430,53 @@
             poweredList = binomialCoefficientList.map(
               (e, i) => e * Math.pow(10, i + 1)
             );
+            console.log(poweredList);
+            console.log(binomialCoefficientList);
             binomialCoefficientList = [];
-            addedValue += poweredList[0];
+            addedValue = poweredList[0];
             let powerOfNum = Math.pow(poweredNum, power);
             whole =
               storedWhole -
-              powerOfNum *
-                Math.pow(10, (lastStep - step) * power);
-            if (step!=lastStep){
+              powerOfNum * Math.pow(10, (lastStep - step) * power);
             if (step != lastStep) {
-              step += 1;
-            }
+              if (step != lastStep) {
+                step += 1;
+              }
 
-            targettedWhole =
-              targettedWhole * Math.pow(10, power) +
-              mergedNumbers[numOfmerged - step - 1];
-            poweredNum = poweredNum * 10 + solutionWholeList[step];
-            powerOfNum = Math.pow(poweredNum, power);
-            subtractResult = targettedWhole - powerOfNum;
-            poweredResult =
-              targettedWhole -
-              Math.pow(poweredNum - solutionWholeList[step], power) -
-              subtractResult;
-            console.log(
-              poweredResult,
-              subtractResult,
-              targettedWhole,
-              poweredNum
-            );
-            console.log(step);
-
-            clearTable();
-            //whole = whole - solutionPoweredList[step]*Math.pow(10,(lastStep-step)*power);
-            if (step <= lastStep) {
-              console.log(targettedWhole);
-              multipendToRow(headRow, whole);
-              multipendToRow(bodyRow, poweredResult, (lastStep - step) * power);
-              multipendToRow(
-                subtractRow,
+              targettedWhole =
+                targettedWhole * Math.pow(10, power) +
+                mergedNumbers[numOfmerged - step - 1];
+              poweredNum = poweredNum * 10 + solutionWholeList[step];
+              powerOfNum = Math.pow(poweredNum, power);
+              subtractResult = targettedWhole - powerOfNum;
+              poweredResult =
+                targettedWhole -
+                Math.pow(poweredNum - solutionWholeList[step], power) -
+                subtractResult;
+              console.log(
+                poweredResult,
                 subtractResult,
-                (lastStep - step) * power
+                targettedWhole,
+                poweredNum
               );
+
+              clearTable();
+              //whole = whole - solutionPoweredList[step]*Math.pow(10,(lastStep-step)*power);
+              if (step <= lastStep) {
+                multipendToRow(headRow, whole);
+                multipendToRow(
+                  bodyRow,
+                  poweredResult,
+                  (lastStep - step) * power
+                );
+                multipendToRow(
+                  subtractRow,
+                  subtractResult,
+                  (lastStep - step) * power
+                );
+              }
             }
           }
-        }
         }
         //--------------------------------------calculate----------------------------------------------------------------------------
         let algorithmBlock = document.querySelector(".algorithm-result");
@@ -657,7 +674,6 @@
       function shiftRow(row, offset) {
         let rowCells = row.children;
         let firstNumberIndex = NumberIndex(row);
-        console.log(rowCells[firstNumberIndex].innerText);
         while (
           firstNumberIndex < maxWidth &&
           rowCells[firstNumberIndex].innerText != ""
@@ -857,6 +873,26 @@
         rowChildren = row.children;
         if (rowChildren[offset].innerText == "") {
           rowChildren[offset].innerText = " ";
+        }
+      }
+      function nextStep() {
+        previousButton.style.display = "inline";
+        if (stateIndex != stateLength - 1) {
+          stateIndex++;
+          tableElement.replaceWith(tableStateList[stateIndex]);
+          tableElement = tableStateList[stateIndex];
+        } if (stateIndex==stateLength-1) {
+          nextButton.style.display = "none";
+        }
+      }
+      function previousStep() {
+        nextButton.style.display = "inline";
+        if (stateIndex != 0) {
+          stateIndex--;
+          tableElement.replaceWith(tableStateList[stateIndex]);
+          tableElement = tableStateList[stateIndex];
+        } if (stateIndex==0) {
+          previousButton.style.display = "none";
         }
       }
     </script>
