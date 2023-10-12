@@ -533,11 +533,6 @@
         }
         return mergedNumbers;
       }
-      function distributeNumbers(numbers, elements) {
-        for ([index, element] of elements.entries()) {
-          element.innerText = numbers[index];
-        }
-      }
       function leastNthRoot(number, power) {
         leastRoot = Math.floor(Math.pow(number, 1 / power));
         return [leastRoot, Math.pow(leastRoot, power)];
@@ -621,10 +616,6 @@
         document.querySelector("tfoot").innerHTML = null;
         document.querySelector("span button").style.display = "none";
       }
-      function setWidth(element, widthElement) {
-        widthOfELement = widthElement.offsetWidth;
-        element.style.width = widthOfELement + "px";
-      }
       function removeBorder(cells, multipier) {
         activeCellIndex = 1;
         cellsLength = cells.length;
@@ -635,29 +626,6 @@
             activeCellIndex++;
           }
           activeCellIndex++;
-        }
-      }
-
-      function binomialCoefficients(power) {
-        if (power < 0) {
-          return [];
-        }
-
-        const coefficients = [];
-        for (let i = 0; i <= power; i++) {
-          coefficients.push(
-            factorial(power) / (factorial(i) * factorial(power - i))
-          );
-        }
-
-        return coefficients;
-      }
-
-      function factorial(n) {
-        if (n === 0 || n === 1) {
-          return 1;
-        } else {
-          return n * factorial(n - 1);
         }
       }
       function borderAroundNumber(cells, above = false) {
@@ -713,23 +681,6 @@
         }
         return -1;
       }
-      function createSubtractRow(num1, num2, offset) {
-        let subtractResults = num1 - num2;
-        let subResultList = getDividedNumbers(subtractResults);
-        newRow = createMaxedRow(subResultList, offset);
-        shiftRow(newRow, offset);
-        return newRow;
-      }
-      function transferRowNumbers(row, targetRow) {
-        let rowChildren = row.children;
-        let targetChildren = targetRow.children;
-        let index = 0;
-        for (cell of rowChildren) {
-          if (cell.innerText != "") {
-            targetChildren[index].innerText = cell.innerText;
-          }
-        }
-      }
       function clearRow(targetRow) {
         let targetChildren = targetRow.children;
         let isEndRow = targetRow.getAttribute("class") == "end-row";
@@ -741,10 +692,6 @@
             cell.style.borderBottom = "none";
           }
         }
-      }
-      function transferRow(row, targetRow) {
-        clearRow(targetRow);
-        transferRowNumbers(row, targetRow);
       }
       function clearTable(exceptionRows = []) {
         clearRow(headRow);
@@ -758,16 +705,6 @@
             clearRow(footer);
           }
         }
-      }
-      function extractNumber(targetRow) {
-        let targetChildren = targetRow.children;
-        let strNumber = "";
-        for (cell in targetChildren) {
-          if (cell.innerText != "") {
-            str = cell.innerText + str;
-          }
-        }
-        return parseInt(strNumber);
       }
       function fillRelative(targetRow, number, down = false, create = false) {
         let firstIndex = NumberIndex(targetRow);
@@ -868,12 +805,6 @@
           powerList.push(Math.pow(number, i));
         }
         return powerList;
-      }
-      function fillCell(row, offset) {
-        rowChildren = row.children;
-        if (rowChildren[offset].innerText == "") {
-          rowChildren[offset].innerText = " ";
-        }
       }
       function nextStep() {
         previousButton.style.display = "inline";
