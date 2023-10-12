@@ -624,7 +624,9 @@
         }
         document.querySelector("tbody").innerHTML = null;
         document.querySelector("tfoot").innerHTML = null;
-        document.querySelector("span button").style.display = "none";
+        document.querySelector(".next").style.display = "none";
+        document.querySelector(".previous").style.display = "none";
+        tableStateList = [];
       }
       function removeBorder(cells, multipier) {
         activeCellIndex = 1;
