@@ -192,7 +192,12 @@
         var whole = document.getElementById("whole").value;
         power = document.getElementById("root-power").valueAsNumber;
         let solution = Math.pow(whole, 1.0 / power);
+        console.log(solution);
         let solutionWhole = Math.floor(solution);
+        if (solution-solutionWhole>0.9999999999999){
+          solutionWhole = Math.ceil(solution);
+          solution = solutionWhole;
+        }
         let solutionWholeList = getDividedNumbers(solutionWhole).reverse();
 
         let solutionPoweredList = solutionWholeList.map((e) =>
@@ -201,6 +206,7 @@
         waterMarkElement = document.querySelector("header p");
         tHeads = document.querySelectorAll("th");
         numbers = getDividedNumbers(whole);
+
         mergedNumbers = mergeNumbers(numbers, power);
         numOfmerged = mergedNumbers.length;
         headRow = document.querySelector(".headRow");
@@ -368,6 +374,7 @@
           console.log(tableStateList);
           tableElement.replaceWith(tableStateList[0]);
           tableElement = tableStateList[0];
+          console.log(tableStateList);
 
           //-------------------------------------------------------------------------------
           function showStep() {
@@ -469,9 +476,7 @@
                 targettedWhole,
                 poweredNum
               );
-
               clearTable();
-              //whole = whole - solutionPoweredList[step]*Math.pow(10,(lastStep-step)*power);
               if (step <= lastStep) {
                 multipendToRow(headRow, whole);
                 multipendToRow(
