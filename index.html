@@ -194,8 +194,8 @@
         power = document.getElementById("root-power").valueAsNumber;
         let solution = Math.pow(whole, 1.0 / power);
         let solutionWhole = Math.floor(solution);
-        if (solution-solutionWhole>0.9999999999999){
-          solutionWhole = Math.ceil(solution);
+        if (Math.pow(solutionWhole+1,power).toString()==whole.toString()){
+          solutionWhole = solutionWhole+1;
           solution = solutionWhole;
         }
         let solutionWholeList = getDividedNumbers(solutionWhole).reverse();
