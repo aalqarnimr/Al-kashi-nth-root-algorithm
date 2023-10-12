@@ -277,7 +277,7 @@
         if (power === 2 || power === 1) {
           footerRow = document.createElement("tr");
           tableFooterElement.appendChild(footerRow);
-          binomialCoefficientsList = binomialCoefficients(power);
+          binomialCoefficientsList = power==1 ? [1,1] : [1,2,1];
           footerNum = leasthNth;
           listFooterNum = getDividedNumbers(footerNum);
           createRowCells(
