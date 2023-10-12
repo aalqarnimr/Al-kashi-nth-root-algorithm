@@ -190,9 +190,9 @@
       function startAlgorithm() {
         resetTable();
         var whole = document.getElementById("whole").value;
+        let storedWhole = whole;
         power = document.getElementById("root-power").valueAsNumber;
         let solution = Math.pow(whole, 1.0 / power);
-        console.log(solution);
         let solutionWhole = Math.floor(solution);
         if (solution-solutionWhole>0.9999999999999){
           solutionWhole = Math.ceil(solution);
@@ -357,7 +357,6 @@
           let poweredList = getNumberPowerList(solutionWholeList[0]);
           let addedValue = 0;
           subtractRow.setAttribute("class", "end-row");
-          let storedWhole = whole;
           let footerLastRow = createSection(power + 1, true);
           let lastRows = [];
           let targettedWhole = mergedNumbers[numOfmerged - 1];
@@ -371,10 +370,8 @@
           }
           showStep();
           stateLength = tableStateList.length;
-          console.log(tableStateList);
           tableElement.replaceWith(tableStateList[0]);
           tableElement = tableStateList[0];
-          console.log(tableStateList);
 
           //-------------------------------------------------------------------------------
           function showStep() {
@@ -447,8 +444,6 @@
             poweredList = binomialCoefficientList.map(
               (e, i) => e * Math.pow(10, i + 1)
             );
-            console.log(poweredList);
-            console.log(binomialCoefficientList);
             binomialCoefficientList = [];
             addedValue = poweredList[0];
             let powerOfNum = Math.pow(poweredNum, power);
@@ -470,12 +465,6 @@
                 targettedWhole -
                 Math.pow(poweredNum - solutionWholeList[step], power) -
                 subtractResult;
-              console.log(
-                poweredResult,
-                subtractResult,
-                targettedWhole,
-                poweredNum
-              );
               clearTable();
               if (step <= lastStep) {
                 multipendToRow(headRow, whole);
@@ -514,7 +503,7 @@
         let exactResultElement = document.querySelector(
           ".exact-result-solution"
         );
-        underRootElement.innerHTML = whole;
+        underRootElement.innerHTML = storedWhole;
         rootPowerElement.innerHTML = power;
         exactResultElement.innerText = solution;
       }
