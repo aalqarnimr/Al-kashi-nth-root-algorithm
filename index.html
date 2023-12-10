@@ -4,9 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>خوارزمية ايجاد الجذر النوني للكاشي</title>
-    <meta name="description" content="هذه الصفحه تقدم الخوارزمية التي صنعها الكاشي لإيجاد الجذر لأي درجة مع الخطوات ايضا">
-    <meta name="keywords" content="جدول,الخطوات,الكاشي, خوارزمية, الجذر النوني">
-    <meta name="author" content="احمد القرني">
+    <meta
+      name="description"
+      content="هذه الصفحه تقدم الخوارزمية التي صنعها الكاشي لإيجاد الجذر لأي درجة مع الخطوات ايضا"
+    />
+    <meta
+      name="keywords"
+      content="جدول,الخطوات,الكاشي, خوارزمية, الجذر النوني"
+    />
+    <meta name="author" content="احمد القرني" />
     <title>Document</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <style>
@@ -16,6 +22,7 @@
       h1 {
         margin: 0px;
         display: block;
+        font-size: larger;
       }
       input#root-power {
         margin-right: 10px;
@@ -122,12 +129,26 @@
         background-color: white;
       }
       table tr:nth-child(even) {
-        background-color: rgba(213, 213, 213, 0.229);
+        background-color: rgba(213, 213, 213, 0.158);
+      }
+      .footer-end *,
+      .body-end *,
+      .subtract-row * {
+        background-color: rgb(132, 205, 207);
+      }
+      .first-row * {
+       background-color: rgba(228, 240, 62, 0.601)
+      }
+      * { 
+        font-size: large;
       }
     </style>
   </head>
   <body>
-    <header><h1>خوارزمية إيجاد الجذر النوني للكاشي</h1> <p>مبرمج بواسطة أحمد القرني</p></header>
+    <header>
+      <h1>خوارزمية إيجاد الجذر النوني للكاشي</h1>
+      <p>مبرمج بواسطة أحمد القرني</p>
+    </header>
     <form>
       <p>
         <label for="whole">الرقم المجذور: </label>
@@ -162,6 +183,18 @@
       <math>
         <mfrac>
           <msup>
+            <mi class="Snumerator"></mi>
+          </msup>
+          <msup>
+            <mi class="Sdenominator"></mi>
+          </msup>
+        </mfrac>
+      </math>
+      <b class="Swhole-result"></b>
+      =
+      <math>
+        <mfrac>
+          <msup>
             <mi class="numerator"></mi>
           </msup>
           <msup>
@@ -170,7 +203,8 @@
         </mfrac>
       </math>
       <b class="whole-result"></b>
-      ≈ <b class="approximate-result"></b>
+      ≈
+      <b class="approximate-result"></b>
     </p>
     <p class="exact-result">
       الناتج الحقيقي:
@@ -194,8 +228,8 @@
         power = document.getElementById("root-power").valueAsNumber;
         let solution = Math.pow(whole, 1.0 / power);
         let solutionWhole = Math.floor(solution);
-        if (Math.pow(solutionWhole+1,power).toString()==whole.toString()){
-          solutionWhole = solutionWhole+1;
+        if (Math.pow(solutionWhole + 1, power).toString() == whole.toString()) {
+          solutionWhole = solutionWhole + 1;
           solution = solutionWhole;
         }
         let solutionWholeList = getDividedNumbers(solutionWhole).reverse();
@@ -228,7 +262,10 @@
           power
         );
         maxWidth = headRow.children.length;
-        if (waterMarkElement==null||waterMarkElement.innerText !="مبرمج بواسطة أحمد القرني"){
+        if (
+          waterMarkElement == null ||
+          waterMarkElement.innerText != "مبرمج بواسطة أحمد القرني"
+        ) {
           maxWidth = 0;
         }
         firstNumber = headRow.lastChild;
@@ -287,7 +324,7 @@
         if (power === 2 || power === 1) {
           footerRow = document.createElement("tr");
           tableFooterElement.appendChild(footerRow);
-          binomialCoefficientsList = power==1 ? [1,1] : [1,2,1];
+          binomialCoefficientsList = power == 1 ? [1, 1] : [1, 2, 1];
           footerNum = leasthNth;
           listFooterNum = getDividedNumbers(footerNum);
           createRowCells(
@@ -344,8 +381,31 @@
             borderAroundNumber(subtractRow.children, true);
             footerNum = footerNum + solutionWholeList[i];
           }
+          footerRow = document.createElement("tr");
+          footerRow.className = "footer-end";
+          subtractRow.className = "body-end";
+          tdBody = document.createElement("td");
+          tdBody.innerHTML = "الباقي";
+          tdBody.style.border = "none";
+          subtractRow.append(tdBody);
+          tableFooterElement.prepend(footerRow);
+          createRowCells(
+            getDividedNumbers(footerNum),
+            footerRow,
+            false,
+            0,
+            "",
+            "before-maxed",
+            1,
+            maxWidth
+          );
+          tdFooter = document.createElement("td");
+          tdFooter.innerHTML = "الرقم السفلي";
+          tdBody.style.border = "none";
+          footerRow.append(tdFooter);
+          removeBorder(footerRow.children, power);
           bodyTable.append(emptyBodyRow);
-        } else if (power >= 2) {
+        } else if (power > 2) {
           stateIndex = 0;
           nextButton = document.querySelector(".next");
           previousButton = document.querySelector(".previous");
@@ -353,10 +413,10 @@
           tableStateList = [];
           let lastStep = numOfmerged - 1;
           document.querySelector("span .next").style.display = "inline";
-          let binomialCoefficientList = [];
+          binomialCoefficientList = [];
           let poweredList = getNumberPowerList(solutionWholeList[0]);
           let addedValue = 0;
-          subtractRow.setAttribute("class", "end-row");
+          subtractRow.setAttribute("class", "end-row subtract-row");
           let footerLastRow = createSection(power + 1, true);
           let lastRows = [];
           let targettedWhole = mergedNumbers[numOfmerged - 1];
@@ -368,13 +428,30 @@
           while (step < lastStep) {
             showStep();
           }
+          tdSub = document.createElement("td");
+          tdSub.innerText = "سطر الباقي";
+          tdSub.style.border = "none";
+          tdSub.style.backgroundColor = "white";
+          subtractRow.append(tdSub);
+          console.log(firstRows);
+          firstRows.forEach((row) => {
+            row.className = "first-row";
+            tdSub = document.createElement("td");
+            tdSub.innerText = "صف سفلي";
+            tdSub.removeAttribute("style");
+            tdSub.style.border = "none";
+            tdSub.style.backgroundColor = "white";
+            row.append(tdSub);
+          });
           showStep();
+          console.log(firstRows);
           stateLength = tableStateList.length;
           tableElement.replaceWith(tableStateList[0]);
           tableElement = tableStateList[0];
 
           //-------------------------------------------------------------------------------
           function showStep() {
+            firstRows = [];
             let multipiers = multipierOf(
               solutionWholeList[step],
               addedValue,
@@ -401,6 +478,10 @@
               );
               shiftRow(clonedRow, power - 1);
             }
+            if (step == lastStep - 1) {
+              firstRows.push(filledRows[filledRows.length - 1]);
+              console.log(filledRows);
+            }
             binomialCoefficientList.push(shiftedMultipliers.pop());
             let previousList = shiftedMultipliers;
             if (step != 0) {
@@ -422,6 +503,7 @@
                 solutionWholeList[step]
               );
               filledRows = fillRelativeRows(activeSecRow, operationList);
+              firstRows.push(filledRows[filledRows.length - 1]);
               let filteredRows = filledRows.filter((e, i) => i % 2 == 1);
               filteredRows.forEach((e) => borderAroundNumber(e.children));
               let lastResult = operationList.pop();
@@ -444,7 +526,6 @@
             poweredList = binomialCoefficientList.map(
               (e, i) => e * Math.pow(10, i + 1)
             );
-            binomialCoefficientList = [];
             addedValue = poweredList[0];
             let powerOfNum = Math.pow(poweredNum, power);
             whole =
@@ -466,19 +547,14 @@
                 Math.pow(poweredNum - solutionWholeList[step], power) -
                 subtractResult;
               clearTable();
-              if (step <= lastStep) {
-                multipendToRow(headRow, whole);
-                multipendToRow(
-                  bodyRow,
-                  poweredResult,
-                  (lastStep - step) * power
-                );
-                multipendToRow(
-                  subtractRow,
-                  subtractResult,
-                  (lastStep - step) * power
-                );
-              }
+              binomialCoefficientList = [];
+              multipendToRow(headRow, whole);
+              multipendToRow(bodyRow, poweredResult, (lastStep - step) * power);
+              multipendToRow(
+                subtractRow,
+                subtractResult,
+                (lastStep - step) * power
+              );
             }
           }
         }
@@ -487,11 +563,32 @@
         let exactBlock = document.querySelector(".exact-result");
         algorithmBlock.style.display = "block";
         exactBlock.style.display = "block";
-        let powerDiffrence =
-          Math.pow(solutionWhole + 1, power) - Math.pow(solutionWhole, power);
+        let powerDiffrence = 0;
+        if (power > 2) {
+          powerDiffrence =
+            binomialCoefficientList.reduce(
+              (partialSum, a) => partialSum + a,
+              0
+            ) + 1;
+          console.log(firstRows);
+        } else {
+          powerDiffrence =
+            Math.pow(solutionWhole + 1, power) - Math.pow(solutionWhole, power);
+        }
         let approximateFraction = subtractResult / powerDiffrence;
         let algWholeElement = document.querySelector(".whole-result");
+        let stepAlgWholeElement = document.querySelector(".Swhole-result");
         algWholeElement.innerText = solutionWhole;
+        let stepNumeratorA = document.querySelector(".Snumerator");
+        let stepDenominatorA = document.querySelector(".Sdenominator");
+        stepAlgWholeElement.innerText = solutionWhole;
+        if (power <= 2) {
+          stepNumeratorA.innerHTML = "الباقي";
+          stepDenominatorA.innerHTML = "1+الرقم السفلي";
+        } else {
+          stepNumeratorA.innerHTML = "سطر الباقي";
+          stepDenominatorA.innerHTML = "مجموع الصفوف السفليه+1";
+        }
         let numeratorA = document.querySelector(".numerator");
         numeratorA.innerHTML = subtractResult;
         let denominatorA = document.querySelector(".denominator");
@@ -638,9 +735,9 @@
         for (cell of cells) {
           if (cell.innerText.length != 0) {
             if (above) {
-              cell.style.borderTop = "2px solid grey";
+              cell.style.borderTop = "2px solid red";
             } else {
-              cell.style.borderBottom = "2px solid grey";
+              cell.style.borderBottom = "2px solid red";
             }
           }
         }
@@ -818,7 +915,8 @@
           stateIndex++;
           tableElement.replaceWith(tableStateList[stateIndex]);
           tableElement = tableStateList[stateIndex];
-        } if (stateIndex==stateLength-1) {
+        }
+        if (stateIndex == stateLength - 1) {
           nextButton.style.display = "none";
         }
       }
@@ -828,7 +926,8 @@
           stateIndex--;
           tableElement.replaceWith(tableStateList[stateIndex]);
           tableElement = tableStateList[stateIndex];
-        } if (stateIndex==0) {
+        }
+        if (stateIndex == 0) {
           previousButton.style.display = "none";
         }
       }
